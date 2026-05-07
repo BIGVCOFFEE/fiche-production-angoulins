@@ -1,0 +1,762 @@
+[
+  {
+    "categorie": "🥪 CLUBS & TOASTS",
+    "produit": "Club Froid Saumon Concombre",
+    "ext_sem": 5.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 5.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥪 CLUBS & TOASTS",
+    "produit": "Club toaste Jambon Cheddar",
+    "ext_sem": 5.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 7.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥪 CLUBS & TOASTS",
+    "produit": "Club toaste Jambon Bacon Comte",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 5.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥪 CLUBS & TOASTS",
+    "produit": "Club toaste Poulet Curry",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥪 CLUBS & TOASTS",
+    "produit": "Club Grilled Cheese",
+    "ext_sem": 3.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 5.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🫓 FOCACCIA",
+    "produit": "Focaccia Boeuf Smoky",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 5.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 5.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🫓 FOCACCIA",
+    "produit": "Focaccia Veggie Melt",
+    "ext_sem": 3.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 3.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🍞 TOAST & CROQUE",
+    "produit": "English Toast Bacon",
+    "ext_sem": 20.0,
+    "kiosque_sem": 10.0,
+    "ext_sam": 30.0,
+    "kiosque_sam": 10.0,
+    "ext_dim": 30.0,
+    "kiosque_dim": 10.0
+  },
+  {
+    "categorie": "🍞 TOAST & CROQUE",
+    "produit": "Croque Monsieur",
+    "ext_sem": 6.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥐 BUN BRIOCHE",
+    "produit": "Bun Ptit Saumon",
+    "ext_sem": 4.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🥐 BUN BRIOCHE",
+    "produit": "Bun Ptit Poulet",
+    "ext_sem": 4.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🥙 CIABATTA",
+    "produit": "Ciabatta Tomates Mozza Pesto",
+    "ext_sem": 3.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 4.0,
+    "kiosque_sam": 0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🥙 CIABATTA",
+    "produit": "Ciabatta Poulet Cajun",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥙 CIABATTA",
+    "produit": "Ciabatta 3 Fromages",
+    "ext_sem": 4.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 5.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 5.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🥙 CIABATTA",
+    "produit": "Ciabatta Effiloche de Boeuf",
+    "ext_sem": 5.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 5.0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🥙 CIABATTA",
+    "produit": "Ciabatta Smoky Rotisserie",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 5.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥯 BAGEL",
+    "produit": "Bagel Saumon Concombre",
+    "ext_sem": 10.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 12.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 8.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥯 BAGEL",
+    "produit": "Bagel Jambon Cru Chevre Miel",
+    "ext_sem": 8.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 10.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥯 BAGEL",
+    "produit": "Bagel Smoky Rotisserie",
+    "ext_sem": 4.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 4.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥗 SALADES & BOWLS",
+    "produit": "Buddha Bowl Quinoa Falafels",
+    "ext_sem": 3.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 2.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 2.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🥗 SALADES & BOWLS",
+    "produit": "Salade Thonique Saumon",
+    "ext_sem": 2.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 3.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 2.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🥗 SALADES & BOWLS",
+    "produit": "Salade Facon Cesar",
+    "ext_sem": 6.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 5.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 5.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍓 POTS FRAIS",
+    "produit": "Fromage Blanc Fraise",
+    "ext_sem": 6.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 4.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍓 POTS FRAIS",
+    "produit": "Fromage Blanc Citron",
+    "ext_sem": 4.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 4.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍓 POTS FRAIS",
+    "produit": "Fromage Blanc du Jour",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🍓 POTS FRAIS",
+    "produit": "Salade de Fruits",
+    "ext_sem": 5.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 4.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍪 COOKIES",
+    "produit": "Cookie Chocolat Blanc",
+    "ext_sem": 18.0,
+    "kiosque_sem": 12.0,
+    "ext_sam": 24.0,
+    "kiosque_sam": 18.0,
+    "ext_dim": 18.0,
+    "kiosque_dim": 12.0
+  },
+  {
+    "categorie": "🍪 COOKIES",
+    "produit": "Cookie Coeur Choco Noisette",
+    "ext_sem": 36.0,
+    "kiosque_sem": 16.0,
+    "ext_sam": 70.0,
+    "kiosque_sam": 24.0,
+    "ext_dim": 36.0,
+    "kiosque_dim": 16.0
+  },
+  {
+    "categorie": "🍪 COOKIES",
+    "produit": "Cookie Chocolat Lait Noisette",
+    "ext_sem": 18.0,
+    "kiosque_sem": 12.0,
+    "ext_sam": 24.0,
+    "kiosque_sam": 18.0,
+    "ext_dim": 18.0,
+    "kiosque_dim": 12.0
+  },
+  {
+    "categorie": "🍪 COOKIES",
+    "produit": "Cookie Choco Noir Fleur de Sel",
+    "ext_sem": 24.0,
+    "kiosque_sem": 12.0,
+    "ext_sam": 36.0,
+    "kiosque_sam": 18.0,
+    "ext_dim": 24.0,
+    "kiosque_dim": 12.0
+  },
+  {
+    "categorie": "🥐 VIENNOISERIES",
+    "produit": "Croissant",
+    "ext_sem": 8.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 12.0,
+    "kiosque_sam": 5.0,
+    "ext_dim": 8.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥐 VIENNOISERIES",
+    "produit": "Pain au Chocolat",
+    "ext_sem": 10.0,
+    "kiosque_sem": 4.0,
+    "ext_sam": 12.0,
+    "kiosque_sam": 5.0,
+    "ext_dim": 10.0,
+    "kiosque_dim": 4.0
+  },
+  {
+    "categorie": "🥐 VIENNOISERIES",
+    "produit": "Cinnamon Roll",
+    "ext_sem": 8.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 10.0,
+    "kiosque_sam": 2.0,
+    "ext_dim": 8.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Pain Perdu",
+    "ext_sem": 10.0,
+    "kiosque_sem": 0,
+    "ext_sam": 10.0,
+    "kiosque_sam": 0,
+    "ext_dim": 10.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Pancakes",
+    "ext_sem": 6.0,
+    "kiosque_sem": 0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Cheesecake Fruits Rouges",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Cheesecake Speculoos",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Gateau Chocolat Sans Gluten",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Gateau Choco Coco",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🥞 DECONGEL",
+    "produit": "Carrot Cake (parts)",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🟫 CARRES & GATEAUX",
+    "produit": "Carre Citron Meringuee",
+    "ext_sem": 6.0,
+    "kiosque_sem": 0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 0,
+    "ext_dim": 6.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🟫 CARRES & GATEAUX",
+    "produit": "Carre Brookie",
+    "ext_sem": 8.0,
+    "kiosque_sem": 0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 0,
+    "ext_dim": 8.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🟫 CARRES & GATEAUX",
+    "produit": "Carre Brownie",
+    "ext_sem": 8.0,
+    "kiosque_sem": 0,
+    "ext_sam": 8.0,
+    "kiosque_sam": 0,
+    "ext_dim": 8.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Sucre",
+    "ext_sem": 3.0,
+    "kiosque_sem": 3.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 3.0,
+    "kiosque_dim": 3.0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Sucre Caramel",
+    "ext_sem": 3.0,
+    "kiosque_sem": 0,
+    "ext_sam": 4.0,
+    "kiosque_sam": 0,
+    "ext_dim": 3.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Fourre Choco Noisette",
+    "ext_sem": 3.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 3.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Choco Speculoos",
+    "ext_sem": 3.0,
+    "kiosque_sem": 0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 0,
+    "ext_dim": 3.0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Choco Caramel",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Framboise",
+    "ext_sem": 4.0,
+    "kiosque_sem": 2.0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 4.0,
+    "kiosque_dim": 2.0
+  },
+  {
+    "categorie": "🍩 DONUTS (FSP)",
+    "produit": "Donut Saison",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 6.0,
+    "kiosque_sam": 3.0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pépites de chocolat",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Double chocolat",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Tout Chocolat",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pépites Chocolat Noisettes",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Choco Vanille Marbré",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Choco Blanc Framboises",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Choco Framboises",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Banane Pépites Chocolat",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pistache Poire Pépites choco",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Cœur Choco Noisette",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Brownie Cœur Choco Noisette",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Cœur Spéculoos",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pépites Cœur Choco Noisette",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Choco Cœur Spéculoos",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Banoffee Cœur Caramel",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Cœur citron Meringué",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pécan Cœur Caramel",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Poire Vanille",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Fleur d'oranger",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Ananas Caramel",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Pomme Caramel",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Myrtilles",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Griottes Pistache",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Fruits Rouges",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Façon Rocher",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  },
+  {
+    "categorie": "🧁 MUFFINS",
+    "produit": "Muffin coeur façon cheesecake myrtilles",
+    "ext_sem": 0,
+    "kiosque_sem": 0,
+    "ext_sam": 0,
+    "kiosque_sam": 0,
+    "ext_dim": 0,
+    "kiosque_dim": 0
+  }
+]

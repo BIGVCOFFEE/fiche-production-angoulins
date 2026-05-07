@@ -1,0 +1,646 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.parametres": {
+      "name": "parametres",
+      "schema": "",
+      "columns": {
+        "cle": {
+          "name": "cle",
+          "type": "varchar(100)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "valeur": {
+          "name": "valeur",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'employe'"
+        },
+        "lieu_par_defaut": {
+          "name": "lieu_par_defaut",
+          "type": "lieu",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ext'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "columns": [
+            "email"
+          ],
+          "nullsNotDistinct": false,
+          "name": "users_email_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.audit_log": {
+      "name": "audit_log",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "table_name": {
+          "name": "table_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ligne_id": {
+          "name": "ligne_id",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ancien": {
+          "name": "ancien",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "nouveau": {
+          "name": "nouveau",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ts": {
+          "name": "ts",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "audit_log_user_id_users_id_fk": {
+          "name": "audit_log_user_id_users_id_fk",
+          "tableFrom": "audit_log",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.categories": {
+      "name": "categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emoji": {
+          "name": "emoji",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "icone": {
+          "name": "icone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ordre_affichage": {
+          "name": "ordre_affichage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.saisies_soir": {
+      "name": "saisies_soir",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "produit_id": {
+          "name": "produit_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lieu": {
+          "name": "lieu",
+          "type": "lieu",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite_restante": {
+          "name": "quantite_restante",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "saisie_par": {
+          "name": "saisie_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "saisie_a": {
+          "name": "saisie_a",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "modifie_a": {
+          "name": "modifie_a",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "conserve_extra": {
+          "name": "conserve_extra",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "idx_saisies_date_lieu": {
+          "name": "idx_saisies_date_lieu",
+          "columns": [
+            {
+              "expression": "date",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "date_ops",
+              "isExpression": false
+            },
+            {
+              "expression": "lieu",
+              "asc": true,
+              "nulls": "last",
+              "opclass": "enum_ops",
+              "isExpression": false
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "saisies_soir_produit_id_produits_id_fk": {
+          "name": "saisies_soir_produit_id_produits_id_fk",
+          "tableFrom": "saisies_soir",
+          "tableTo": "produits",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "saisies_soir_saisie_par_users_id_fk": {
+          "name": "saisies_soir_saisie_par_users_id_fk",
+          "tableFrom": "saisies_soir",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "saisie_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "saisies_soir_date_produit_id_lieu_unique": {
+          "columns": [
+            "date",
+            "produit_id",
+            "lieu"
+          ],
+          "nullsNotDistinct": false,
+          "name": "saisies_soir_date_produit_id_lieu_unique"
+        }
+      },
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.jours_speciaux": {
+      "name": "jours_speciaux",
+      "schema": "",
+      "columns": {
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "type_jour_special",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "name": "note",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.produits": {
+      "name": "produits",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "categorie_id": {
+          "name": "categorie_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actif": {
+          "name": "actif",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "ordre_affichage": {
+          "name": "ordre_affichage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "prix_revient_centimes": {
+          "name": "prix_revient_centimes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "consommation_pain": {
+          "name": "consommation_pain",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "couleur": {
+          "name": "couleur",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "duree_vie": {
+          "name": "duree_vie",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 24
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "produits_categorie_id_categories_id_fk": {
+          "name": "produits_categorie_id_categories_id_fk",
+          "tableFrom": "produits",
+          "tableTo": "categories",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "categorie_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.cibles": {
+      "name": "cibles",
+      "schema": "",
+      "columns": {
+        "produit_id": {
+          "name": "produit_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_jour": {
+          "name": "type_jour",
+          "type": "type_jour",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lieu": {
+          "name": "lieu",
+          "type": "lieu",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantite": {
+          "name": "quantite",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cibles_produit_id_produits_id_fk": {
+          "name": "cibles_produit_id_produits_id_fk",
+          "tableFrom": "cibles",
+          "tableTo": "produits",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "produit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "cibles_produit_id_type_jour_lieu_pk": {
+          "name": "cibles_produit_id_type_jour_lieu_pk",
+          "columns": [
+            "produit_id",
+            "type_jour",
+            "lieu"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.cloturas": {
+      "name": "cloturas",
+      "schema": "",
+      "columns": {
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lieu": {
+          "name": "lieu",
+          "type": "lieu",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cloture_par": {
+          "name": "cloture_par",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cloture_a": {
+          "name": "cloture_a",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cloturas_cloture_par_users_id_fk": {
+          "name": "cloturas_cloture_par_users_id_fk",
+          "tableFrom": "cloturas",
+          "tableTo": "users",
+          "schemaTo": "public",
+          "columnsFrom": [
+            "cloture_par"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "cloturas_date_lieu_pk": {
+          "name": "cloturas_date_lieu_pk",
+          "columns": [
+            "date",
+            "lieu"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.lieu": {
+      "name": "lieu",
+      "values": [
+        "ext",
+        "kiosque"
+      ],
+      "schema": "public"
+    },
+    "public.role": {
+      "name": "role",
+      "values": [
+        "admin",
+        "manager",
+        "employe"
+      ],
+      "schema": "public"
+    },
+    "public.type_jour": {
+      "name": "type_jour",
+      "values": [
+        "sem",
+        "sam",
+        "dim"
+      ],
+      "schema": "public"
+    },
+    "public.type_jour_special": {
+      "name": "type_jour_special",
+      "values": [
+        "ferme",
+        "type_semaine",
+        "type_sam"
+      ],
+      "schema": "public"
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {}
+  }
+}
