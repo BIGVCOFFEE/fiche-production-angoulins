@@ -1,15 +1,17 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useTransition } from "react";
-import { setRatioLendemain } from "./actions";
-import { toast } from "sonner";
+import { useState } from "react";
+
+const TRANCHES_PAR_SACHET = 20;
 
 type Produit = {
   id: number;
   nom: string;
   couleur: string | null;
   conserveExtra: number | null;
+  tranchesParUnite: number;
+  estPain: boolean;
   cibleAujourdhui: number;
   cibleDemain: number;
   stockVeille: number;
@@ -51,30 +53,16 @@ function formatDateCourt(date: string) {
 
 export default function FicheProduction({
   date, demain, typeJour, veille, categories,
-  veilleEstCloturee, estFerme, demainEstFerme, ratio: initialRatio,
+  veilleEstCloturee, estFerme, demainEstFerme, ratio,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [masquerCibleZero, setMasquerCibleZero] = useState(true);
-  const [ratio, setRatio] = useState(initialRatio);
-  const [isPending, startTransition] = useTransition();
 
   const changeDate = (delta: number) => {
     const d = new Date(date + "T12:00:00");
     d.setDate(d.getDate() + delta);
     router.push(`${pathname}?date=${d.toISOString().slice(0, 10)}`);
-  };
-
-  const changeRatio = (newRatio: number) => {
-    const val = Math.max(0, Math.min(100, newRatio));
-    setRatio(val);
-    startTransition(async () => {
-      try {
-        await setRatioLendemain(val);
-      } catch {
-        toast.error("Erreur lors de la sauvegarde du ratio");
-      }
-    });
   };
 
   const categoriesFiltrees = categories
@@ -86,26 +74,45 @@ export default function FicheProduction({
     }))
     .filter((cat) => cat.produits.length > 0);
 
-  const totalAProduire = categoriesFiltrees.reduce(
-    (s, c) => s + c.produits.reduce((ss, p) => ss + p.aProduire, 0), 0
-  );
+  const allProduits = categoriesFiltrees.flatMap((c) => c.produits);
+  const totalAProduire = allProduits.reduce((s, p) => s + p.aProduire, 0);
   const nbMasques = categories.reduce(
     (s, c) => s + c.produits.filter((p) => p.cibleAujourdhui === 0 && p.stockVeille === 0).length, 0
   );
   const typeJourLabel = typeJour === "sam" ? "Samedi" : typeJour === "dim" ? "Dimanche" : "Semaine";
 
+  // Récap pains
+  const painsAProduire = allProduits.filter((p) => p.estPain && p.aProduire > 0);
+  const totalPains = painsAProduire.reduce((s, p) => s + p.aProduire, 0);
+
+  // Récap sachets pain de mie
+  const produitsTranches = allProduits.filter((p) => p.tranchesParUnite > 0 && p.aProduire > 0);
+  const totalTranches = produitsTranches.reduce((s, p) => s + p.aProduire * p.tranchesParUnite, 0);
+  const totalSachets = totalTranches > 0 ? Math.ceil(totalTranches / TRANCHES_PAR_SACHET) : 0;
+
+  const hasRecap = painsAProduire.length > 0 || produitsTranches.length > 0;
+
   return (
     <>
       <style>{`
+        @page { size: A4 portrait; margin: 6mm 8mm; }
         @media print {
-          body { background: white !important; color: black !important; }
+          body { background: white !important; color: black !important; font-size: 8pt !important; }
           .no-print { display: none !important; }
           .print-outer { display: block !important; height: auto !important; overflow: visible !important; }
-          .print-container { padding: 8mm 12mm !important; overflow: visible !important; height: auto !important; flex: none !important; }
-          .print-grid { font-size: 9pt !important; }
-          .print-row { padding: 2px 6px !important; }
-          h1 { font-size: 14pt !important; margin-bottom: 2mm !important; }
-          p { font-size: 9pt !important; margin: 0 !important; }
+          .print-container { padding: 0 !important; overflow: visible !important; height: auto !important; flex: none !important; }
+          h1 { font-size: 12pt !important; margin-bottom: 1mm !important; }
+          p { font-size: 7.5pt !important; margin: 0 !important; }
+          .print-cat-header { padding: 2px 6px !important; margin-bottom: 1px !important; }
+          .print-col-header { padding: 1px 4px !important; margin-bottom: 1px !important; }
+          .print-row { padding: 1px 4px !important; min-height: 0 !important; }
+          .print-row span { font-size: 8pt !important; }
+          .print-row .a-produire-big { font-size: 10pt !important; }
+          .print-row .buffer-sub { font-size: 6pt !important; }
+          .print-section-gap { margin-bottom: 6px !important; }
+          .print-recap { margin-top: 6px !important; padding-top: 4px !important; }
+          .print-recap-cols { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+          .page-break-avoid { page-break-inside: avoid; }
         }
         @media (max-width: 640px) {
           .toolbar-wrap  { padding: 10px 12px !important; gap: 8px !important; }
@@ -118,12 +125,11 @@ export default function FicheProduction({
       `}</style>
 
       <div className="print-outer" style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
-        {/* Toolbar */}
+        {/* Toolbar — masqué à l'impression */}
         <div
           className="no-print toolbar-wrap"
           style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 20px", borderBottom: "1px solid var(--border)", background: "var(--bg-elev)", flexShrink: 0, flexWrap: "wrap" }}
         >
-          {/* Date nav */}
           <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
             <button onClick={() => changeDate(-1)} className="toolbar-btn" style={btnStyle}>‹</button>
             <span className="date-display" style={{ fontSize: "13px", fontWeight: 500, padding: "4px 12px", background: "var(--bg-elev-2)", borderRadius: "6px", textTransform: "capitalize", minWidth: "180px", textAlign: "center", color: "var(--text)", border: "1px solid var(--border)" }}>
@@ -132,34 +138,10 @@ export default function FicheProduction({
             <button onClick={() => changeDate(1)} className="toolbar-btn" style={btnStyle}>›</button>
           </div>
 
-          {/* Type jour */}
           <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 8px", borderRadius: "4px", background: "var(--bg-elev-2)", color: "var(--text)", letterSpacing: "0.05em", border: "1px solid var(--border)" }}>
             {typeJourLabel}
           </span>
 
-          {/* Ratio lendemain */}
-          {!demainEstFerme && (
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-              <span style={{ fontSize: "11px", color: "var(--text-dim)", fontWeight: 500 }}>+% demain :</span>
-              <button
-                onClick={() => changeRatio(ratio - 5)}
-                disabled={isPending}
-                className="toolbar-btn"
-                style={{ ...btnStyle, padding: "4px 8px", fontSize: "14px" }}
-              >−</button>
-              <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent)", minWidth: "36px", textAlign: "center", padding: "4px 6px", background: "var(--accent-soft)", borderRadius: "5px", border: "1px solid var(--accent)" }}>
-                {ratio}%
-              </span>
-              <button
-                onClick={() => changeRatio(ratio + 5)}
-                disabled={isPending}
-                className="toolbar-btn"
-                style={{ ...btnStyle, padding: "4px 8px", fontSize: "14px" }}
-              >+</button>
-            </div>
-          )}
-
-          {/* Toggle cible zéro */}
           <button
             onClick={() => setMasquerCibleZero((v) => !v)}
             className="toolbar-btn"
@@ -170,7 +152,6 @@ export default function FicheProduction({
 
           <div style={{ flex: 1 }} />
 
-          {/* Veille non clôturée */}
           {!veilleEstCloturee && (
             <span style={{ fontSize: "12px", color: "var(--orange)", padding: "4px 10px", background: "var(--orange-soft)", borderRadius: "6px" }}>
               ⚠ Saisie du {formatDateCourt(veille)} non clôturée
@@ -179,23 +160,23 @@ export default function FicheProduction({
 
           <button
             onClick={() => window.print()}
-            className="toolbar-btn hide-mobile"
+            className="toolbar-btn"
             style={{ ...btnStyle, background: "var(--accent)", color: "white", fontWeight: 600, display: "flex", alignItems: "center", gap: "6px" }}
           >
             🖨 Imprimer
           </button>
         </div>
 
-        {/* Content */}
+        {/* Contenu */}
         <div className="print-container content-area" style={{ flex: 1, overflow: "auto", padding: "16px 20px" }}>
           {estFerme && (
-            <div style={{ padding: "10px 16px", marginBottom: "16px", background: "var(--red-soft)", border: "1px solid var(--red)", borderRadius: "8px", fontSize: "13px", color: "var(--red)", fontWeight: 600 }}>
+            <div className="no-print" style={{ padding: "10px 16px", marginBottom: "16px", background: "var(--red-soft)", border: "1px solid var(--red)", borderRadius: "8px", fontSize: "13px", color: "var(--red)", fontWeight: 600 }}>
               🔒 Journée marquée comme fermée — aucune production prévue.
             </div>
           )}
 
-          {/* Print header */}
-          <div style={{ marginBottom: "20px", paddingBottom: "12px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+          {/* En-tête d'impression */}
+          <div style={{ marginBottom: "16px", paddingBottom: "10px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
             <div>
               <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", margin: 0, textTransform: "capitalize" }}>
                 Fiche de production — Angoulins
@@ -212,13 +193,13 @@ export default function FicheProduction({
             </div>
           </div>
 
-          {/* Categories */}
+          {/* Catégories */}
           {categoriesFiltrees.map((cat) => {
             const catTotal = cat.produits.reduce((s, p) => s + p.aProduire, 0);
             return (
-              <div key={cat.id} style={{ marginBottom: "20px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "5px 8px", background: "var(--bg-elev-2)", borderRadius: "6px", marginBottom: "4px" }}>
-                  {cat.emoji && <span style={{ fontSize: "15px" }}>{cat.emoji}</span>}
+              <div key={cat.id} className="print-section-gap page-break-avoid" style={{ marginBottom: "18px" }}>
+                <div className="print-cat-header" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "4px 8px", background: "var(--bg-elev-2)", borderRadius: "6px", marginBottom: "3px" }}>
+                  {cat.emoji && <span style={{ fontSize: "14px" }}>{cat.emoji}</span>}
                   <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-dim)", flex: 1 }}>
                     {cat.nom}
                   </span>
@@ -227,26 +208,24 @@ export default function FicheProduction({
                   </span>
                 </div>
 
-                {/* Column headers */}
-                <div className="products-grid print-grid" style={{ display: "grid", gridTemplateColumns: "1fr 60px 64px 80px", gap: "8px", padding: "4px 8px", marginBottom: "2px" }}>
+                <div className="products-grid print-grid print-col-header" style={{ display: "grid", gridTemplateColumns: "1fr 60px 60px 76px", gap: "8px", padding: "3px 8px", marginBottom: "1px" }}>
                   <span style={headerStyle}>Produit</span>
                   <span style={{ ...headerStyle, textAlign: "center" }}>Stock J-1</span>
                   <span style={{ ...headerStyle, textAlign: "center" }}>Cible</span>
                   <span style={{ ...headerStyle, textAlign: "right" }}>À produire</span>
                 </div>
 
-                {/* Product rows */}
                 {cat.produits.map((p) => (
                   <div
                     key={p.id}
                     className="products-grid print-grid print-row"
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "1fr 60px 64px 80px",
+                      gridTemplateColumns: "1fr 60px 60px 76px",
                       gap: "8px",
                       alignItems: "center",
-                      padding: "5px 8px",
-                      borderRadius: "4px",
+                      padding: "4px 8px",
+                      borderRadius: "3px",
                       borderBottom: "1px solid var(--border)",
                       borderLeft: p.conserveExtra && p.conserveExtra > 0
                         ? "3px solid var(--orange)"
@@ -258,7 +237,6 @@ export default function FicheProduction({
                         : p.couleur ? `${p.couleur}14` : "transparent",
                     }}
                   >
-                    {/* Nom */}
                     <span style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: "4px" }}>
                       {p.nom}
                       {p.conserveExtra && p.conserveExtra > 0 && (
@@ -268,29 +246,22 @@ export default function FicheProduction({
                       )}
                     </span>
 
-                    {/* Stock veille */}
                     <span style={{ fontSize: "13px", textAlign: "center", color: p.stockVeille > 0 ? "var(--orange)" : "var(--text-faint)", fontWeight: p.stockVeille > 0 ? 600 : 400 }}>
                       {p.stockVeille || "—"}
                     </span>
 
-                    {/* Cible */}
                     <span style={{ fontSize: "13px", textAlign: "center", color: "var(--text-dim)" }}>
                       {p.cibleAujourdhui || "—"}
                     </span>
 
-                    {/* À produire */}
                     <div style={{ textAlign: "right" }}>
                       {p.aProduire === 0 ? (
-                        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--green)", background: "var(--green-soft)", padding: "2px 6px", borderRadius: "4px" }}>
-                          ✓
-                        </span>
+                        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--green)", background: "var(--green-soft)", padding: "2px 6px", borderRadius: "4px" }}>✓</span>
                       ) : (
                         <div>
-                          <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)" }}>{p.aProduire}</span>
+                          <span className="a-produire-big" style={{ fontSize: "16px", fontWeight: 700, color: "var(--accent)" }}>{p.aProduire}</span>
                           {p.bufferDemain > 0 && (
-                            <div style={{ fontSize: "9px", color: "var(--text-dim)", lineHeight: 1.2 }}>
-                              +{p.bufferDemain} buffer
-                            </div>
+                            <div className="buffer-sub" style={{ fontSize: "9px", color: "var(--text-dim)", lineHeight: 1.2 }}>+{p.bufferDemain} buffer</div>
                           )}
                         </div>
                       )}
@@ -302,8 +273,56 @@ export default function FicheProduction({
           })}
 
           {categoriesFiltrees.length === 0 && (
-            <div style={{ padding: "48px", textAlign: "center", color: "var(--text-dim)", fontSize: "14px" }}>
+            <div className="no-print" style={{ padding: "48px", textAlign: "center", color: "var(--text-dim)", fontSize: "14px" }}>
               Aucun produit à afficher pour cette date.
+            </div>
+          )}
+
+          {/* Récapitulatif pains & sachets */}
+          {hasRecap && (
+            <div className="print-recap page-break-avoid" style={{ marginTop: "20px", paddingTop: "12px", borderTop: "2px solid var(--border)" }}>
+              <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
+                Récapitulatif
+              </div>
+              <div className="print-recap-cols" style={{ display: "grid", gridTemplateColumns: painsAProduire.length > 0 && produitsTranches.length > 0 ? "1fr 1fr" : "1fr", gap: "12px" }}>
+
+                {/* Pains à sortir */}
+                {painsAProduire.length > 0 && (
+                  <div style={{ padding: "10px 12px", border: "1px solid var(--border)", borderRadius: "8px", background: "rgba(245,158,11,0.06)" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--orange)", marginBottom: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>🍞 Pains à sortir</span>
+                      <span style={{ fontSize: "14px" }}>{totalPains} total</span>
+                    </div>
+                    {painsAProduire.map((p) => (
+                      <div key={p.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text)", padding: "2px 0", borderBottom: "1px solid var(--border)" }}>
+                        <span>{p.nom}</span>
+                        <span style={{ fontWeight: 700 }}>{p.aProduire}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Sachets pain de mie */}
+                {produitsTranches.length > 0 && (
+                  <div style={{ padding: "10px 12px", border: "1px solid var(--border)", borderRadius: "8px", background: "rgba(99,102,241,0.05)" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)", marginBottom: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>🥪 Sachets pain de mie</span>
+                      <span style={{ fontSize: "14px" }}>{totalSachets} sachet{totalSachets > 1 ? "s" : ""}</span>
+                    </div>
+                    {produitsTranches.map((p) => (
+                      <div key={p.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text)", padding: "2px 0", borderBottom: "1px solid var(--border)" }}>
+                        <span>{p.nom}</span>
+                        <span style={{ color: "var(--text-dim)" }}>
+                          {p.aProduire} × {p.tranchesParUnite}t = <strong>{p.aProduire * p.tranchesParUnite}t</strong>
+                        </span>
+                      </div>
+                    ))}
+                    <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "4px", textAlign: "right" }}>
+                      {totalTranches} tranches ÷ {TRANCHES_PAR_SACHET}t = <strong style={{ color: "var(--accent)" }}>{totalSachets} sachet{totalSachets > 1 ? "s" : ""}</strong>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -320,6 +339,12 @@ export default function FicheProduction({
           <span style={{ fontWeight: 700, color: "var(--accent)", fontSize: "13px" }}>
             Total à produire : {totalAProduire}
           </span>
+          {hasRecap && totalSachets > 0 && (
+            <span>{totalSachets} sachet{totalSachets > 1 ? "s" : ""} pain de mie</span>
+          )}
+          {hasRecap && totalPains > 0 && (
+            <span>{totalPains} pain{totalPains > 1 ? "s" : ""} à sortir</span>
+          )}
         </div>
       </div>
     </>

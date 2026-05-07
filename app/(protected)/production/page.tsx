@@ -45,6 +45,8 @@ export default async function ProductionPage({
       nom: produits.nom,
       couleur: produits.couleur,
       dureeVie: produits.dureeVie,
+      tranchesParUnite: produits.tranchesParUnite,
+      estPain: produits.estPain,
       ordreAffichage: produits.ordreAffichage,
       categorieId: produits.categorieId,
       categorieNom: categories.nom,
@@ -116,6 +118,7 @@ export default async function ProductionPage({
     id: number; nom: string; emoji: string | null; ordre: number;
     produits: {
       id: number; nom: string; couleur: string | null; conserveExtra: number | null;
+      tranchesParUnite: number; estPain: boolean;
       cibleAujourdhui: number; cibleDemain: number; stockVeille: number;
       aProduire: number; bufferDemain: number;
     }[];
@@ -137,6 +140,7 @@ export default async function ProductionPage({
     }
     categoriesMap[p.categorieId].produits.push({
       id: p.id, nom: p.nom, couleur: p.couleur, conserveExtra,
+      tranchesParUnite: p.tranchesParUnite, estPain: p.estPain,
       cibleAujourdhui, cibleDemain, stockVeille, aProduire, bufferDemain,
     });
   }
