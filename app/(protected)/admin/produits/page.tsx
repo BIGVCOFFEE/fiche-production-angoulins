@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { categories, produits, cibles } from "@/lib/db/schema";
-import { eq, and } from "drizzle-orm";
+import { categories, produits, cibles, parametres } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import AdminProduits from "./AdminProduits";
 import { createClient } from "@/lib/supabase/server";
 import { getUserRole } from "@/lib/auth/role";
@@ -13,14 +13,16 @@ export default async function AdminProduitsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || await getUserRole(user.id) !== "admin") redirect("/aujourdhui");
 
-  const [prods, ciblesData, toutesLesCategories] = await Promise.all([
+  const [prods, ciblesData, toutesLesCategories, ratioRow] = await Promise.all([
     db
       .select({
         id: produits.id,
         nom: produits.nom,
-        actif: produits.actif,
         actifAngoulins: produits.actifAngoulins,
         couleur: produits.couleur,
+        dureeVie: produits.dureeVie,
+        tranchesParUnite: produits.tranchesParUnite,
+        estPain: produits.estPain,
         ordreAffichage: produits.ordreAffichage,
         categorieId: produits.categorieId,
         categorieNom: categories.nom,
@@ -32,6 +34,7 @@ export default async function AdminProduitsPage() {
       .orderBy(categories.ordreAffichage, produits.ordreAffichage),
     db.select().from(cibles).where(eq(cibles.lieu, LIEU)),
     db.select().from(categories).orderBy(categories.ordreAffichage),
+    db.select().from(parametres).where(eq(parametres.cle, "angoulins_ratio_lendemain")),
   ]);
 
   const ciblesMap: Record<number, Record<string, number>> = {};
@@ -42,13 +45,19 @@ export default async function AdminProduitsPage() {
 
   const categoriesMap: Record<number, {
     id: number; nom: string; emoji: string | null; ordre: number;
-    produits: { id: number; nom: string; actifAngoulins: boolean; couleur: string | null; cibles: Record<string, number> }[];
+    produits: {
+      id: number; nom: string; actifAngoulins: boolean; couleur: string | null;
+      dureeVie: number; tranchesParUnite: number; estPain: boolean;
+      cibles: Record<string, number>;
+    }[];
   }> = {};
 
   for (const p of prods) {
     categoriesMap[p.categorieId] ??= { id: p.categorieId, nom: p.categorieNom, emoji: p.categorieEmoji, ordre: p.categorieOrdre, produits: [] };
     categoriesMap[p.categorieId].produits.push({
-      id: p.id, nom: p.nom, actifAngoulins: p.actifAngoulins, couleur: p.couleur,
+      id: p.id, nom: p.nom, actifAngoulins: p.actifAngoulins,
+      couleur: p.couleur, dureeVie: p.dureeVie,
+      tranchesParUnite: p.tranchesParUnite, estPain: p.estPain,
       cibles: ciblesMap[p.id] ?? {},
     });
   }
@@ -58,6 +67,7 @@ export default async function AdminProduitsPage() {
   }
 
   const categoriesList = Object.values(categoriesMap).sort((a, b) => a.ordre - b.ordre);
+  const ratio = parseInt(ratioRow[0]?.valeur ?? "40", 10);
 
-  return <AdminProduits categories={categoriesList} />;
+  return <AdminProduits categories={categoriesList} ratio={ratio} />;
 }
