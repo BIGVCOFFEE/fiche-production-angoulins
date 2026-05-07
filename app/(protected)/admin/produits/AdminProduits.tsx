@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useRef, useState, useTransition } from "react";
-import { updateCible } from "./actions";
+import { updateCible, toggleActifAngoulins, ajouterProduit } from "./actions";
 import { toast } from "sonner";
 
 type Produit = {
   id: number;
   nom: string;
-  actif: boolean;
+  actifAngoulins: boolean;
   couleur: string | null;
   cibles: Record<string, number>;
 };
@@ -34,7 +34,17 @@ export default function AdminProduits({ categories }: { categories: Categorie[] 
     return m;
   });
 
+  const [actifMap, setActifMap] = useState<Record<number, boolean>>(() => {
+    const m: Record<number, boolean> = {};
+    for (const cat of categories)
+      for (const p of cat.produits) m[p.id] = p.actifAngoulins;
+    return m;
+  });
+
+  const [newNom, setNewNom] = useState<Record<number, string>>({});
+  const [showAdd, setShowAdd] = useState<Record<number, boolean>>({});
   const [savingCible, setSavingCible] = useState<Record<string, boolean>>({});
+  const [, startTransition] = useTransition();
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
   const handleCible = useCallback(
@@ -54,9 +64,34 @@ export default function AdminProduits({ categories }: { categories: Categorie[] 
     []
   );
 
-  const totalActifs = categories.reduce((s, c) => s + c.produits.filter((p) => p.actif).length, 0);
+  const handleToggle = useCallback((produitId: number) => {
+    const next = !actifMap[produitId];
+    setActifMap((prev) => ({ ...prev, [produitId]: next }));
+    startTransition(async () => {
+      try { await toggleActifAngoulins(produitId, next); }
+      catch {
+        setActifMap((prev) => ({ ...prev, [produitId]: !next }));
+        toast.error("Erreur de sauvegarde");
+      }
+    });
+  }, [actifMap]);
+
+  const handleAjouter = useCallback((categorieId: number) => {
+    const nom = (newNom[categorieId] ?? "").trim();
+    if (!nom) return;
+    startTransition(async () => {
+      try {
+        await ajouterProduit(categorieId, nom);
+        setNewNom((prev) => ({ ...prev, [categorieId]: "" }));
+        setShowAdd((prev) => ({ ...prev, [categorieId]: false }));
+        toast.success("Produit ajouté");
+      } catch { toast.error("Erreur lors de l'ajout"); }
+    });
+  }, [newNom]);
+
+  const totalActifs = categories.reduce((s, c) => s + c.produits.filter((p) => actifMap[p.id]).length, 0);
   const totalProduits = categories.reduce((s, c) => s + c.produits.length, 0);
-  const gridCols = "1fr 100px 100px";
+  const gridCols = "1fr 52px 100px 100px";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
@@ -75,6 +110,7 @@ export default function AdminProduits({ categories }: { categories: Categorie[] 
         {/* Column headers */}
         <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: "8px", padding: "4px 8px", marginBottom: "4px", position: "sticky", top: 0, background: "var(--bg)", zIndex: 1 }}>
           <span style={headerStyle}>Produit</span>
+          <span style={{ ...headerStyle, textAlign: "center" }}>Actif</span>
           {TYPE_JOURS.map((tj) => (
             <span key={tj} style={{ ...headerStyle, textAlign: "center" }}>{TJ_LABELS[tj]}</span>
           ))}
@@ -88,12 +124,45 @@ export default function AdminProduits({ categories }: { categories: Categorie[] 
                 {cat.nom}
               </span>
               <span style={{ fontSize: "11px", color: "var(--text-faint)" }}>
-                {cat.produits.filter((p) => p.actif).length}/{cat.produits.length}
+                {cat.produits.filter((p) => actifMap[p.id]).length}/{cat.produits.length}
               </span>
+              <button
+                onClick={() => setShowAdd((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }))}
+                style={{ fontSize: "11px", padding: "2px 8px", borderRadius: "4px", border: "1px solid var(--border)", background: "var(--bg-elev)", color: "var(--text-dim)", cursor: "pointer" }}
+              >
+                + Produit
+              </button>
             </div>
+
+            {showAdd[cat.id] && (
+              <div style={{ display: "flex", gap: "6px", padding: "6px 8px", marginBottom: "4px" }}>
+                <input
+                  type="text"
+                  placeholder="Nom du produit"
+                  value={newNom[cat.id] ?? ""}
+                  onChange={(e) => setNewNom((prev) => ({ ...prev, [cat.id]: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleAjouter(cat.id); }}
+                  style={{ flex: 1, padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-elev-2)", color: "var(--text)", fontSize: "13px", outline: "none" }}
+                  autoFocus
+                />
+                <button
+                  onClick={() => handleAjouter(cat.id)}
+                  style={{ padding: "6px 14px", borderRadius: "6px", border: "none", background: "var(--accent)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}
+                >
+                  Ajouter
+                </button>
+                <button
+                  onClick={() => setShowAdd((prev) => ({ ...prev, [cat.id]: false }))}
+                  style={{ padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-dim)", fontSize: "13px", cursor: "pointer" }}
+                >
+                  ✕
+                </button>
+              </div>
+            )}
 
             {cat.produits.map((p) => {
               const couleur = p.couleur;
+              const actif = actifMap[p.id] ?? true;
               return (
                 <div
                   key={p.id}
@@ -106,12 +175,31 @@ export default function AdminProduits({ categories }: { categories: Categorie[] 
                     borderBottom: "1px solid var(--border)",
                     borderLeft: couleur ? `3px solid ${couleur}` : undefined,
                     background: couleur ? `${couleur}10` : "transparent",
-                    opacity: p.actif ? 1 : 0.4,
+                    opacity: actif ? 1 : 0.4,
                   }}
                 >
                   <span style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {p.nom}
                   </span>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button
+                      onClick={() => handleToggle(p.id)}
+                      title={actif ? "Désactiver sur Angoulins" : "Activer sur Angoulins"}
+                      style={{
+                        width: "32px", height: "18px", borderRadius: "9px",
+                        border: "none", cursor: "pointer", flexShrink: 0,
+                        background: actif ? "var(--accent)" : "var(--border)",
+                        position: "relative", transition: "background 0.15s",
+                      }}
+                    >
+                      <span style={{
+                        position: "absolute", top: "3px",
+                        left: actif ? "15px" : "3px",
+                        width: "12px", height: "12px", borderRadius: "50%",
+                        background: "#fff", transition: "left 0.15s",
+                      }} />
+                    </button>
+                  </div>
                   {TYPE_JOURS.map((tj) => {
                     const key = `${p.id}-${tj}`;
                     const val = ciblesMap[p.id]?.[tj] ?? "0";

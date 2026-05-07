@@ -19,6 +19,7 @@ export default async function AdminProduitsPage() {
         id: produits.id,
         nom: produits.nom,
         actif: produits.actif,
+        actifAngoulins: produits.actifAngoulins,
         couleur: produits.couleur,
         ordreAffichage: produits.ordreAffichage,
         categorieId: produits.categorieId,
@@ -41,13 +42,13 @@ export default async function AdminProduitsPage() {
 
   const categoriesMap: Record<number, {
     id: number; nom: string; emoji: string | null; ordre: number;
-    produits: { id: number; nom: string; actif: boolean; couleur: string | null; cibles: Record<string, number> }[];
+    produits: { id: number; nom: string; actifAngoulins: boolean; couleur: string | null; cibles: Record<string, number> }[];
   }> = {};
 
   for (const p of prods) {
     categoriesMap[p.categorieId] ??= { id: p.categorieId, nom: p.categorieNom, emoji: p.categorieEmoji, ordre: p.categorieOrdre, produits: [] };
     categoriesMap[p.categorieId].produits.push({
-      id: p.id, nom: p.nom, actif: p.actif, couleur: p.couleur,
+      id: p.id, nom: p.nom, actifAngoulins: p.actifAngoulins, couleur: p.couleur,
       cibles: ciblesMap[p.id] ?? {},
     });
   }

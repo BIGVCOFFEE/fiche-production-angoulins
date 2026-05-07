@@ -46,6 +46,7 @@ export const produits = pgTable("produits", {
     .references(() => categories.id),
   nom: varchar("nom", { length: 255 }).notNull(),
   actif: boolean("actif").notNull().default(true),
+  actifAngoulins: boolean("actif_angoulins").notNull().default(true),
   ordreAffichage: integer("ordre_affichage").notNull().default(0),
   prixRevientCentimes: integer("prix_revient_centimes"),
   consommationPain: jsonb("consommation_pain"),

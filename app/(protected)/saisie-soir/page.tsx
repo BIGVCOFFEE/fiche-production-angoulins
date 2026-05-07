@@ -44,7 +44,7 @@ export default async function SaisieSoirPage({
     })
     .from(produits)
     .innerJoin(categories, eq(produits.categorieId, categories.id))
-    .where(eq(produits.actif, true))
+    .where(eq(produits.actifAngoulins, true))
     .orderBy(categories.ordreAffichage, produits.ordreAffichage);
 
   const produitIds = prods.map((p) => p.id);
