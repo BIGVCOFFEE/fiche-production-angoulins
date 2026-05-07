@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 
-const TRANCHES_PAR_SACHET = 20;
+const TRANCHES_PAR_SACHET = 18;
 
 type Produit = {
   id: number;
