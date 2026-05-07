@@ -52,6 +52,7 @@ export default async function ProductionPage({
       categorieNom: categories.nom,
       categorieEmoji: categories.emoji,
       categorieOrdre: categories.ordreAffichage,
+      categorieEstPain: categories.estPain,
     })
     .from(produits)
     .innerJoin(categories, eq(produits.categorieId, categories.id))
@@ -115,7 +116,7 @@ export default async function ProductionPage({
   }
 
   const categoriesMap: Record<number, {
-    id: number; nom: string; emoji: string | null; ordre: number;
+    id: number; nom: string; emoji: string | null; ordre: number; estPain: boolean;
     produits: {
       id: number; nom: string; couleur: string | null; conserveExtra: number | null;
       tranchesParUnite: number; estPain: boolean;
@@ -136,7 +137,7 @@ export default async function ProductionPage({
     const aProduire = baseAProduire + bufferDemain;
 
     if (!categoriesMap[p.categorieId]) {
-      categoriesMap[p.categorieId] = { id: p.categorieId, nom: p.categorieNom, emoji: p.categorieEmoji, ordre: p.categorieOrdre, produits: [] };
+      categoriesMap[p.categorieId] = { id: p.categorieId, nom: p.categorieNom, emoji: p.categorieEmoji, ordre: p.categorieOrdre, estPain: p.categorieEstPain, produits: [] };
     }
     categoriesMap[p.categorieId].produits.push({
       id: p.id, nom: p.nom, couleur: p.couleur, conserveExtra,

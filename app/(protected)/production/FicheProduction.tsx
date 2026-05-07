@@ -24,6 +24,7 @@ type Categorie = {
   nom: string;
   emoji: string | null;
   ordre: number;
+  estPain: boolean;
   produits: Produit[];
 };
 
@@ -81,16 +82,20 @@ export default function FicheProduction({
   );
   const typeJourLabel = typeJour === "sam" ? "Samedi" : typeJour === "dim" ? "Dimanche" : "Semaine";
 
-  // Récap pains
-  const painsAProduire = allProduits.filter((p) => p.estPain && p.aProduire > 0);
-  const totalPains = painsAProduire.reduce((s, p) => s + p.aProduire, 0);
+  // Sachets
+  const totalTranches = allProduits.reduce((s, p) => s + p.aProduire * p.tranchesParUnite, 0);
+  const totalSachets = Math.ceil(totalTranches / TRANCHES_PAR_SACHET);
 
-  // Récap sachets pain de mie
-  const produitsTranches = allProduits.filter((p) => p.tranchesParUnite > 0 && p.aProduire > 0);
-  const totalTranches = produitsTranches.reduce((s, p) => s + p.aProduire * p.tranchesParUnite, 0);
-  const totalSachets = totalTranches > 0 ? Math.ceil(totalTranches / TRANCHES_PAR_SACHET) : 0;
-
-  const hasRecap = painsAProduire.length > 0 || produitsTranches.length > 0;
+  // Totaux par catégorie pain (style BIG V)
+  const painTotals = categoriesFiltrees
+    .filter((cat) => cat.estPain)
+    .map((cat) => ({
+      key: `cat-${cat.id}`,
+      label: cat.nom,
+      emoji: cat.emoji,
+      total: cat.produits.reduce((s, p) => s + p.aProduire, 0),
+    }))
+    .filter((pt) => pt.total > 0);
 
   return (
     <>
@@ -278,51 +283,24 @@ export default function FicheProduction({
             </div>
           )}
 
-          {/* Récapitulatif pains & sachets */}
-          {hasRecap && (
-            <div className="print-recap page-break-avoid" style={{ marginTop: "20px", paddingTop: "12px", borderTop: "2px solid var(--border)" }}>
-              <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-dim)", marginBottom: "8px" }}>
-                Récapitulatif
-              </div>
-              <div className="print-recap-cols" style={{ display: "grid", gridTemplateColumns: painsAProduire.length > 0 && produitsTranches.length > 0 ? "1fr 1fr" : "1fr", gap: "12px" }}>
-
-                {/* Pains à sortir */}
-                {painsAProduire.length > 0 && (
-                  <div style={{ padding: "10px 12px", border: "1px solid var(--border)", borderRadius: "8px", background: "rgba(245,158,11,0.06)" }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--orange)", marginBottom: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span>🍞 Pains à sortir</span>
-                      <span style={{ fontSize: "14px" }}>{totalPains} total</span>
-                    </div>
-                    {painsAProduire.map((p) => (
-                      <div key={p.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text)", padding: "2px 0", borderBottom: "1px solid var(--border)" }}>
-                        <span>{p.nom}</span>
-                        <span style={{ fontWeight: 700 }}>{p.aProduire}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Sachets pain de mie */}
-                {produitsTranches.length > 0 && (
-                  <div style={{ padding: "10px 12px", border: "1px solid var(--border)", borderRadius: "8px", background: "rgba(99,102,241,0.05)" }}>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)", marginBottom: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span>🥪 Sachets pain de mie</span>
-                      <span style={{ fontSize: "14px" }}>{totalSachets} sachet{totalSachets > 1 ? "s" : ""}</span>
-                    </div>
-                    {produitsTranches.map((p) => (
-                      <div key={p.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text)", padding: "2px 0", borderBottom: "1px solid var(--border)" }}>
-                        <span>{p.nom}</span>
-                        <span style={{ color: "var(--text-dim)" }}>
-                          {p.aProduire} × {p.tranchesParUnite}t = <strong>{p.aProduire * p.tranchesParUnite}t</strong>
-                        </span>
-                      </div>
-                    ))}
-                    <div style={{ fontSize: "11px", color: "var(--text-dim)", marginTop: "4px", textAlign: "right" }}>
-                      {totalTranches} tranches ÷ {TRANCHES_PAR_SACHET}t = <strong style={{ color: "var(--accent)" }}>{totalSachets} sachet{totalSachets > 1 ? "s" : ""}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
+          {/* Récapitulatif sachets + pains */}
+          {totalSachets > 0 && (
+            <div className="print-sachet-row page-break-avoid" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", margin: "12px 0 4px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-elev-2)" }}>
+              <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>🥪 Besoin en sachet clubs</span>
+              <span style={{ fontSize: "18px", fontWeight: 700, color: "var(--accent)" }}>
+                {totalSachets} sachet{totalSachets > 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
+          {painTotals.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-elev)", fontSize: "12px" }}>
+              {painTotals.map((pt) => (
+                <span key={pt.key} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "2px 8px", borderRadius: "4px", background: "var(--accent-soft)", color: "var(--text)", border: "1px solid var(--border)" }}>
+                  {pt.emoji && <span>{pt.emoji}</span>}
+                  <span>{pt.label}</span>
+                  <strong style={{ color: "var(--accent)" }}>{pt.total}</strong>
+                </span>
+              ))}
             </div>
           )}
         </div>
@@ -339,11 +317,8 @@ export default function FicheProduction({
           <span style={{ fontWeight: 700, color: "var(--accent)", fontSize: "13px" }}>
             Total à produire : {totalAProduire}
           </span>
-          {hasRecap && totalSachets > 0 && (
+          {totalSachets > 0 && (
             <span>{totalSachets} sachet{totalSachets > 1 ? "s" : ""} pain de mie</span>
-          )}
-          {hasRecap && totalPains > 0 && (
-            <span>{totalPains} pain{totalPains > 1 ? "s" : ""} à sortir</span>
           )}
         </div>
       </div>
