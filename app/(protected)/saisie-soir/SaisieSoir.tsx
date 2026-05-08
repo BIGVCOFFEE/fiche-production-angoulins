@@ -30,6 +30,7 @@ type Props = {
   categories: Categorie[];
   isCloture: boolean;
   alertsProlong: Record<number, number>;
+  openSundays: string[];
 };
 
 function formatDate(date: string) {
@@ -50,7 +51,7 @@ function WasteBadge({ cible, restant }: { cible: number; restant: number | null 
   return <span style={{ fontSize: "11px", fontWeight: 600, color, minWidth: "36px", textAlign: "right" }}>{pct}%</span>;
 }
 
-export default function SaisieSoir({ date, typeJour, categories, isCloture, alertsProlong }: Props) {
+export default function SaisieSoir({ date, typeJour, categories, isCloture, alertsProlong, openSundays }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -152,6 +153,9 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
   const changeDate = (delta: number) => {
     const d = new Date(date + "T12:00:00");
     d.setDate(d.getDate() + delta);
+    if (d.getDay() === 0 && !openSundays.includes(d.toISOString().slice(0, 10))) {
+      d.setDate(d.getDate() + delta);
+    }
     router.push(`${pathname}?date=${d.toISOString().slice(0, 10)}`);
   };
 

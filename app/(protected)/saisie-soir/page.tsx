@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { categories, produits, cibles, saisiesSoir, cloturas } from "@/lib/db/schema";
+import { categories, produits, cibles, saisiesSoir, cloturas, joursSpeciaux } from "@/lib/db/schema";
 import { eq, and, inArray } from "drizzle-orm";
 import SaisieSoir from "./SaisieSoir";
 
@@ -31,6 +31,11 @@ export default async function SaisieSoirPage({
 }: {
   searchParams: Promise<{ date?: string }>;
 }) {
+  const allJoursSpeciaux = await db.select().from(joursSpeciaux);
+  const openSundays = allJoursSpeciaux
+    .filter((j) => j.type !== "ferme" && new Date(j.date + "T12:00:00").getDay() === 0)
+    .map((j) => j.date);
+
   const params = await searchParams;
   const date = params.date ?? getDateParis();
   const veille = dateMoins1(date);
@@ -56,7 +61,7 @@ export default async function SaisieSoirPage({
 
   const produitIds = prods.map((p) => p.id);
 
-  const expiryDates = [...new Set(prods.map((p) => dateMinusDays(date, p.dureeVie / 24)))];
+  const expiryDates = [...new Set(prods.map((p) => dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1))))];
 
   const [ciblesData, saisiesData, saisiesVeille, saisiesExpiry, clotureRows] = await Promise.all([
     produitIds.length > 0
@@ -90,8 +95,12 @@ export default async function SaisieSoirPage({
   }
 
   const alertsProlong: Record<number, number> = {};
+  const veilleConserveExtraMap: Record<number, number> = {};
   for (const s of saisiesVeille) {
-    if (s.conserveExtra && s.conserveExtra > 0) alertsProlong[s.produitId] = s.conserveExtra;
+    if (s.conserveExtra && s.conserveExtra > 0) {
+      alertsProlong[s.produitId] = s.conserveExtra;
+      veilleConserveExtraMap[s.produitId] = s.conserveExtra;
+    }
   }
 
   const expiryMap: Record<string, Record<number, number>> = {};
@@ -112,7 +121,8 @@ export default async function SaisieSoirPage({
       cible: ciblesMap[p.id]?.[typeJour] ?? 0,
       restant: saisiesMap[p.id] ?? null,
       conserveExtra: conserveExtraMap[p.id] ?? null,
-      aJeter: expiryMap[dateMinusDays(date, p.dureeVie / 24)]?.[p.id] ?? 0,
+      aJeter: (expiryMap[dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1))]?.[p.id] ?? 0) +
+              (veilleConserveExtraMap[p.id] ?? 0),
     });
   }
 
@@ -126,6 +136,7 @@ export default async function SaisieSoirPage({
       categories={categoriesList}
       isCloture={isCloture}
       alertsProlong={alertsProlong}
+      openSundays={openSundays}
     />
   );
 }
