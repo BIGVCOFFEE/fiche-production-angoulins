@@ -104,22 +104,23 @@ export default function FicheProduction({
   return (
     <>
       <style>{`
-        @page { size: A4 portrait; margin: 4mm 5mm; }
+        @page { size: A4 portrait; margin: 6mm 8mm; }
         @media print {
-          html { zoom: 75%; }
-          body { background: white !important; color: black !important; }
+          body { background: white !important; color: black !important; font-size: 8pt !important; }
           .no-print { display: none !important; }
           .print-outer { display: block !important; height: auto !important; overflow: visible !important; }
           .print-container { padding: 0 !important; overflow: visible !important; height: auto !important; flex: none !important; }
-          h1 { font-size: 13pt !important; margin: 0 0 1px !important; }
-          p { font-size: 8pt !important; margin: 0 !important; }
-          .print-cat-header { padding: 1px 5px !important; margin-bottom: 0 !important; }
-          .print-col-header { padding: 0px 3px !important; margin-bottom: 0 !important; }
-          .print-row { padding: 0px 3px !important; min-height: 0 !important; line-height: 1.15 !important; }
-          .print-row span { font-size: 8pt !important; line-height: 1.15 !important; }
-          .print-row .a-produire-big { font-size: 10pt !important; }
-          .print-row .buffer-sub { font-size: 5.5pt !important; }
-          .print-section-gap { margin-bottom: 2px !important; }
+          h1 { font-size: 12pt !important; margin: 0 0 1px !important; }
+          p { font-size: 7.5pt !important; margin: 0 !important; }
+          .print-cats-container { columns: 2; column-gap: 10mm; }
+          .print-cat-block { break-inside: avoid; page-break-inside: avoid; margin-bottom: 6px !important; }
+          .print-cat-header { padding: 2px 5px !important; margin-bottom: 1px !important; font-size: 7.5pt !important; }
+          .print-col-header { padding: 1px 4px !important; margin-bottom: 1px !important; }
+          .print-row { padding: 1px 4px !important; min-height: 0 !important; line-height: 1.2 !important; }
+          .print-row span { font-size: 7.5pt !important; }
+          .print-row .a-produire-big { font-size: 9pt !important; }
+          .print-row .buffer-sub { font-size: 6pt !important; }
+          .print-grid { grid-template-columns: 1fr 38px 38px 46px !important; gap: 4px !important; }
           .print-sachet-row { margin: 4px 0 2px !important; padding: 4px 8px !important; }
           .page-break-avoid { page-break-inside: avoid; }
         }
@@ -202,11 +203,12 @@ export default function FicheProduction({
             </div>
           </div>
 
-          {/* Catégories */}
+          {/* Catégories — 2 colonnes à l'impression */}
+          <div className="print-cats-container">
           {categoriesFiltrees.map((cat) => {
             const catTotal = cat.produits.reduce((s, p) => s + p.aProduire, 0);
             return (
-              <div key={cat.id} className="print-section-gap page-break-avoid" style={{ marginBottom: "18px" }}>
+              <div key={cat.id} className="print-cat-block print-section-gap page-break-avoid" style={{ marginBottom: "18px" }}>
                 <div className="print-cat-header" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "4px 8px", background: "var(--bg-elev-2)", borderRadius: "6px", marginBottom: "3px" }}>
                   {cat.emoji && <span style={{ fontSize: "14px" }}>{cat.emoji}</span>}
                   <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-dim)", flex: 1 }}>
@@ -217,7 +219,7 @@ export default function FicheProduction({
                   </span>
                 </div>
 
-                <div className="products-grid print-grid print-col-header" style={{ display: "grid", gridTemplateColumns: "1fr 60px 60px 76px", gap: "8px", padding: "3px 8px", marginBottom: "1px" }}>
+                <div className="products-grid print-grid print-col-header" style={{ display: "grid", gridTemplateColumns: "1fr 60px 60px 76px", gap: "8px", padding: "3px 8px", marginBottom: "0" }}>
                   <span style={headerStyle}>Produit</span>
                   <span style={{ ...headerStyle, textAlign: "center" }}>Stock J-1</span>
                   <span style={{ ...headerStyle, textAlign: "center" }}>Cible</span>
@@ -227,7 +229,7 @@ export default function FicheProduction({
                 {cat.produits.map((p) => (
                   <div
                     key={p.id}
-                    className="products-grid print-grid print-row"
+                    className="products-grid print-grid print-row page-break-avoid"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 60px 60px 76px",
@@ -280,6 +282,8 @@ export default function FicheProduction({
               </div>
             );
           })}
+
+          </div>{/* fin print-cats-container */}
 
           {categoriesFiltrees.length === 0 && (
             <div className="no-print" style={{ padding: "48px", textAlign: "center", color: "var(--text-dim)", fontSize: "14px" }}>
