@@ -74,7 +74,7 @@ export default async function ProtectedLayout({
           >
             {user.email?.[0]?.toUpperCase() ?? "?"}
           </div>
-          <span style={{ fontSize: "13px" }}>{user.email}</span>
+          <span className="header-email" style={{ fontSize: "13px" }}>{user.email}</span>
           <ThemeToggle />
           <LogoutButton />
         </div>

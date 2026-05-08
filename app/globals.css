@@ -175,6 +175,11 @@ body {
   main { overflow: visible !important; height: auto !important; }
 }
 
+@media (max-width: 640px) {
+  .header-email { display: none !important; }
+  header { padding: 8px 12px !important; }
+}
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }

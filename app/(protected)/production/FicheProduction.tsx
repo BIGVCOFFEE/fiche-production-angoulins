@@ -246,7 +246,7 @@ export default function FicheProduction({
                         : p.couleur ? `${p.couleur}14` : "transparent",
                     }}
                   >
-                    <span style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <span style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", display: "flex", alignItems: "center", gap: "4px", minWidth: 0 }}>
                       {p.nom}
                       {p.conserveExtra && p.conserveExtra > 0 && (
                         <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--orange)", background: "var(--orange-soft)", padding: "1px 5px", borderRadius: "3px", flexShrink: 0 }}>
