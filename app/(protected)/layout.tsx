@@ -42,7 +42,7 @@ export default async function ProtectedLayout({
                 background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
               }}
             />
-            <span>Production</span>
+            <span className="header-logo-text">Production</span>
           </div>
 
           <NavLinks isAdmin={isAdmin} />

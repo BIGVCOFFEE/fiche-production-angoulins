@@ -176,8 +176,13 @@ body {
 }
 
 @media (max-width: 640px) {
+  html, body { overflow-x: hidden; }
   .header-email { display: none !important; }
+  .header-logo-text { display: none !important; }
   header { padding: 8px 12px !important; }
+  header nav { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+  header nav::-webkit-scrollbar { display: none; }
+  header nav a { font-size: 12px !important; padding: 4px 8px !important; white-space: nowrap; }
 }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
