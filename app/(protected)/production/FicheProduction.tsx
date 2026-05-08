@@ -104,23 +104,23 @@ export default function FicheProduction({
   return (
     <>
       <style>{`
-        @page { size: A4 portrait; margin: 6mm 8mm; }
+        @page { size: A4 portrait; margin: 4mm 5mm; }
         @media print {
-          body { background: white !important; color: black !important; font-size: 8pt !important; }
+          html { zoom: 75%; }
+          body { background: white !important; color: black !important; }
           .no-print { display: none !important; }
           .print-outer { display: block !important; height: auto !important; overflow: visible !important; }
           .print-container { padding: 0 !important; overflow: visible !important; height: auto !important; flex: none !important; }
-          h1 { font-size: 12pt !important; margin-bottom: 1mm !important; }
-          p { font-size: 7.5pt !important; margin: 0 !important; }
-          .print-cat-header { padding: 2px 6px !important; margin-bottom: 1px !important; }
-          .print-col-header { padding: 1px 4px !important; margin-bottom: 1px !important; }
-          .print-row { padding: 1px 4px !important; min-height: 0 !important; }
-          .print-row span { font-size: 8pt !important; }
+          h1 { font-size: 13pt !important; margin: 0 0 1px !important; }
+          p { font-size: 8pt !important; margin: 0 !important; }
+          .print-cat-header { padding: 1px 5px !important; margin-bottom: 0 !important; }
+          .print-col-header { padding: 0px 3px !important; margin-bottom: 0 !important; }
+          .print-row { padding: 0px 3px !important; min-height: 0 !important; line-height: 1.15 !important; }
+          .print-row span { font-size: 8pt !important; line-height: 1.15 !important; }
           .print-row .a-produire-big { font-size: 10pt !important; }
-          .print-row .buffer-sub { font-size: 6pt !important; }
-          .print-section-gap { margin-bottom: 6px !important; }
-          .print-recap { margin-top: 6px !important; padding-top: 4px !important; }
-          .print-recap-cols { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
+          .print-row .buffer-sub { font-size: 5.5pt !important; }
+          .print-section-gap { margin-bottom: 2px !important; }
+          .print-sachet-row { margin: 4px 0 2px !important; padding: 4px 8px !important; }
           .page-break-avoid { page-break-inside: avoid; }
         }
         @media (max-width: 640px) {
@@ -185,7 +185,7 @@ export default function FicheProduction({
           )}
 
           {/* En-tête d'impression */}
-          <div style={{ marginBottom: "16px", paddingBottom: "10px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+          <div style={{ marginBottom: "10px", paddingBottom: "6px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
             <div>
               <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", margin: 0, textTransform: "capitalize" }}>
                 Fiche de production — Angoulins
