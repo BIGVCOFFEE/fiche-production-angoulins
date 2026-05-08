@@ -20,6 +20,12 @@ function dateMoins1(date: string) {
   return d.toISOString().slice(0, 10);
 }
 
+function dateMinusDays(date: string, days: number) {
+  const d = new Date(date + "T12:00:00");
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
 export default async function SaisieSoirPage({
   searchParams,
 }: {
@@ -36,6 +42,7 @@ export default async function SaisieSoirPage({
       id: produits.id,
       nom: produits.nom,
       couleur: produits.couleur,
+      dureeVie: produits.dureeVie,
       ordreAffichage: produits.ordreAffichage,
       categorieId: produits.categorieId,
       categorieNom: categories.nom,
@@ -49,7 +56,9 @@ export default async function SaisieSoirPage({
 
   const produitIds = prods.map((p) => p.id);
 
-  const [ciblesData, saisiesData, saisiesVeille, clotureRows] = await Promise.all([
+  const expiryDates = [...new Set(prods.map((p) => dateMinusDays(date, p.dureeVie / 24)))];
+
+  const [ciblesData, saisiesData, saisiesVeille, saisiesExpiry, clotureRows] = await Promise.all([
     produitIds.length > 0
       ? db.select().from(cibles).where(and(eq(cibles.lieu, LIEU), inArray(cibles.produitId, produitIds)))
       : [],
@@ -58,6 +67,9 @@ export default async function SaisieSoirPage({
       : [],
     produitIds.length > 0
       ? db.select().from(saisiesSoir).where(and(eq(saisiesSoir.date, veille), eq(saisiesSoir.lieu, LIEU)))
+      : [],
+    produitIds.length > 0
+      ? db.select().from(saisiesSoir).where(and(inArray(saisiesSoir.date, expiryDates), eq(saisiesSoir.lieu, LIEU)))
       : [],
     db.select().from(cloturas).where(and(eq(cloturas.date, date), eq(cloturas.lieu, LIEU))),
   ]);
@@ -82,9 +94,15 @@ export default async function SaisieSoirPage({
     if (s.conserveExtra && s.conserveExtra > 0) alertsProlong[s.produitId] = s.conserveExtra;
   }
 
+  const expiryMap: Record<string, Record<number, number>> = {};
+  for (const s of saisiesExpiry) {
+    expiryMap[s.date] ??= {};
+    expiryMap[s.date][s.produitId] = s.quantiteRestante;
+  }
+
   const categoriesMap: Record<number, {
     id: number; nom: string; emoji: string | null; ordre: number;
-    produits: { id: number; nom: string; couleur: string | null; ordre: number; cible: number; restant: number | null; conserveExtra: number | null }[];
+    produits: { id: number; nom: string; couleur: string | null; ordre: number; cible: number; restant: number | null; conserveExtra: number | null; aJeter: number }[];
   }> = {};
 
   for (const p of prods) {
@@ -94,6 +112,7 @@ export default async function SaisieSoirPage({
       cible: ciblesMap[p.id]?.[typeJour] ?? 0,
       restant: saisiesMap[p.id] ?? null,
       conserveExtra: conserveExtraMap[p.id] ?? null,
+      aJeter: expiryMap[dateMinusDays(date, p.dureeVie / 24)]?.[p.id] ?? 0,
     });
   }
 

@@ -13,6 +13,7 @@ type Produit = {
   cible: number;
   restant: number | null;
   conserveExtra: number | null;
+  aJeter: number;
 };
 
 type Categorie = {
@@ -193,7 +194,7 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
         .toolbar-btn         { min-height: 44px !important; padding: 8px 14px !important; font-size: 14px !important; }
         .date-display        { min-width: 0 !important; font-size: 12px !important; }
         .content-area        { padding: 10px 12px !important; }
-        .products-grid       { grid-template-columns: 1fr 44px 70px auto !important; gap: 5px !important; padding: 6px 6px !important; }
+        .products-grid       { grid-template-columns: 1fr 44px 70px 44px auto !important; gap: 5px !important; padding: 6px 6px !important; }
         .waste-badge         { display: none !important; }
         .restant-input       { min-height: 44px !important; font-size: 16px !important; }
         .conserve-circle     { width: 36px !important; height: 36px !important; }
@@ -265,11 +266,12 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
               </span>
             </div>
 
-            <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "1fr 60px 80px 48px auto", gap: "8px", padding: "0 8px", marginBottom: "4px" }}>
+            <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "1fr 60px 80px 48px 56px auto", gap: "8px", padding: "0 8px", marginBottom: "4px" }}>
               <span style={headerStyle}>Produit</span>
               <span style={{ ...headerStyle, textAlign: "center" }}>Cible</span>
               <span style={{ ...headerStyle, textAlign: "center" }}>Restant</span>
               <span style={{ ...headerStyle, textAlign: "right" }}>%</span>
+              <span style={{ ...headerStyle, textAlign: "center" }}>À jeter</span>
               <span style={headerStyle} />
             </div>
 
@@ -287,7 +289,7 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
                 <div
                   key={p.id}
                   className="products-grid"
-                  style={{ display: "grid", gridTemplateColumns: "1fr 60px 80px 48px auto", gap: "8px", alignItems: "center", padding: "4px 8px", borderRadius: "6px", background: couleurBg, borderLeft: isProlong ? "3px solid var(--orange)" : p.couleur ? `3px solid ${p.couleur}` : undefined, transition: "background 0.1s" }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 60px 80px 48px 56px auto", gap: "8px", alignItems: "center", padding: "4px 8px", borderRadius: "6px", background: couleurBg, borderLeft: isProlong ? "3px solid var(--orange)" : p.couleur ? `3px solid ${p.couleur}` : undefined, transition: "background 0.1s" }}
                 >
                   <div style={{ display: "flex", flexDirection: "column", gap: "1px", minWidth: 0 }}>
                     <span style={{ fontSize: "13px", color: isCloture ? "var(--text-dim)" : "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -315,6 +317,17 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
                   />
 
                   <span className="waste-badge"><WasteBadge cible={p.cible} restant={restantNum} /></span>
+
+                  {/* À jeter */}
+                  <div style={{ textAlign: "center" }}>
+                    {p.aJeter > 0 ? (
+                      <span style={{ display: "inline-block", fontSize: "13px", fontWeight: 700, color: "var(--red)", background: "var(--red-soft)", border: "1px solid var(--red)", borderRadius: "4px", padding: "1px 6px", minWidth: "28px" }}>
+                        {p.aJeter}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: "12px", color: "var(--text-faint)" }}>—</span>
+                    )}
+                  </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "4px", justifyContent: "flex-end" }}>
                     {showInput && (
