@@ -47,8 +47,8 @@ export default function ModeEmploiPage() {
             Pour chaque produit, entrez le nombre d'unités <strong>non vendues</strong> restantes.
           </p>
           <ExampleBox>
-            Il reste 4 croissants → saisir <Num>4</Num> dans la ligne Croissant.<br />
-            Il ne reste rien → saisir <Num>0</Num> (ne pas laisser vide, ça signifie « pas encore saisi »).
+            Il reste 4 muffins → saisir <Num>4</Num> dans la ligne Muffin.<br />
+            Il ne reste aucun bagel → saisir <Num>0</Num> (ne pas laisser vide, ça signifie « pas encore saisi »).
           </ExampleBox>
           <p style={pStyle}>
             La colonne <strong>Cible</strong> rappelle l'objectif de vente du jour pour référence.
@@ -75,13 +75,13 @@ export default function ModeEmploiPage() {
             Le calcul dépend de la <strong>durée de vie</strong> du produit :
           </p>
           <ul style={ulStyle}>
-            <li><strong>24 h</strong> (ex : baguette) → on jette ce qui restait <em>hier soir</em></li>
-            <li><strong>48 h</strong> (ex : pain de campagne) → on jette ce qui restait <em>avant-hier soir</em></li>
-            <li><strong>72 h</strong> (ex : certaines viennoiseries) → on jette ce qui restait il y a <em>3 jours</em></li>
+            <li><strong>24 h</strong> (ex : muffin, croissant) → on jette ce qui restait <em>hier soir</em></li>
+            <li><strong>48 h</strong> (ex : ciabatta, club) → on jette ce qui restait <em>avant-hier soir</em></li>
+            <li><strong>72 h</strong> (ex : bagel, viennoiserie emballée) → on jette ce qui restait il y a <em>3 jours</em></li>
           </ul>
           <ExampleBox>
-            On est mercredi soir. Il restait 3 baguettes (24 h) mardi soir → <strong>À jeter : 3</strong>.<br />
-            Il restait 5 pains de campagne (48 h) lundi soir → <strong>À jeter : 5</strong>.
+            On est mercredi soir. Il restait 3 muffins (24 h) mardi soir → <strong>À jeter : 3</strong>.<br />
+            Il restait 5 ciabattas (48 h) lundi soir → <strong>À jeter : 5</strong>.
           </ExampleBox>
         </Level>
 
@@ -90,10 +90,10 @@ export default function ModeEmploiPage() {
             Parfois, un produit techniquement périmé est encore présentable et vous souhaitez le garder un jour de plus. Utilisez le champ <strong>Prolongé</strong> (colonne ⚡).
           </p>
           <ExampleBox>
-            Vendredi soir : 6 tartelettes doivent être jetées, mais elles sont parfaites pour le samedi.
-            Saisir <Num>6</Num> dans la colonne ⚡ de la ligne Tartelette.<br /><br />
+            Vendredi soir : 6 viennoiseries doivent être jetées, mais elles sont parfaites pour le samedi.
+            Saisir <Num>6</Num> dans la colonne ⚡ de la ligne concernée.<br /><br />
             Le lendemain matin (samedi), la fiche production affiche <em>⚡ +6 prolongé</em> sur ce produit.
-            Ces 6 unités sont déjà comptées dans le stock — pas besoin d'en produire davantage.
+            Ces 6 unités sont déjà comptées dans le stock — pas besoin d'en préparer davantage.
           </ExampleBox>
           <Callout type="warn">
             Le samedi soir, ces unités réapparaissent automatiquement dans « À jeter » — elles doivent être retirées ce soir sans exception.
@@ -107,10 +107,10 @@ export default function ModeEmploiPage() {
 
         <Level n={1} label="Lire la fiche production">
           <p style={pStyle}>
-            La colonne <strong>À produire</strong> indique combien d'unités fabriquer pour la journée. C'est la seule colonne qui compte pour les boulangers.
+            La colonne <strong>À produire</strong> indique combien d'unités préparer pour la journée. C'est la seule colonne qui compte pour l'équipe de production.
           </p>
           <ExampleBox>
-            Croissant — stock veille : 3 · cible : 15 → À produire : <Num>12</Num>
+            Muffin myrtille — stock veille : 3 · cible : 15 → À préparer : <Num>12</Num>
           </ExampleBox>
         </Level>
 
@@ -133,9 +133,9 @@ export default function ModeEmploiPage() {
             Chaque produit a une cible différente selon le type de jour : <strong>Semaine</strong> (lun–ven), <strong>Samedi</strong> et <strong>Dimanche</strong>.
           </p>
           <ExampleBox>
-            Baguette tradition → cible semaine : <Num>15</Num> · cible samedi : <Num>25</Num><br />
-            Un lundi avec 4 restants → À produire : 15 − 4 = <Num>11</Num><br />
-            Un samedi avec 4 restants → À produire : 25 − 4 = <Num>21</Num>
+            Club sandwich → cible semaine : <Num>15</Num> · cible samedi : <Num>25</Num><br />
+            Un lundi avec 4 restants → À préparer : 15 − 4 = <Num>11</Num><br />
+            Un samedi avec 4 restants → À préparer : 25 − 4 = <Num>21</Num>
           </ExampleBox>
           <p style={pStyle}>
             Les cibles se règlent dans l'onglet <strong>Admin → Produits</strong> (réservé aux administrateurs).
@@ -155,9 +155,9 @@ export default function ModeEmploiPage() {
             À produire = max(0, Cible aujourd&apos;hui − Stock) + arrondi(Cible demain × 40 %)
           </code>
           <ExampleBox>
-            Croissant — cible aujourd'hui : <Num>15</Num> · stock veille : <Num>3</Num> · cible demain : <Num>20</Num><br />
+            Muffin myrtille — cible aujourd'hui : <Num>15</Num> · stock veille : <Num>3</Num> · cible demain : <Num>20</Num><br />
             Buffer demain : arrondi(20 × 40 %) = <Num>8</Num><br />
-            À produire : (15 − 3) + 8 = <Num>20</Num>
+            À préparer : (15 − 3) + 8 = <Num>20</Num>
           </ExampleBox>
           <p style={pStyle}>
             La colonne <strong>Demain +X</strong> sur la fiche production détaille le buffer calculé pour chaque produit.
@@ -182,9 +182,9 @@ export default function ModeEmploiPage() {
             Le dimanche est généralement fermé : aucune saisie n'est enregistrée. Le lundi, la production regarde donc directement les restants du <strong>samedi soir</strong> pour les produits à 24 h.
           </p>
           <ExampleBox>
-            Samedi soir : 4 briochettes restantes (24 h).<br />
+            Samedi soir : 4 croissants restants (24 h).<br />
             Dimanche : fermé, aucune saisie.<br />
-            Lundi matin : stock = <Num>4</Num> (samedi), cible semaine = 12 → À produire = <Num>8</Num> (+ buffer lendemain).
+            Lundi matin : stock = <Num>4</Num> (samedi), cible semaine = 12 → À préparer = <Num>8</Num> (+ buffer lendemain).
           </ExampleBox>
         </Level>
 
