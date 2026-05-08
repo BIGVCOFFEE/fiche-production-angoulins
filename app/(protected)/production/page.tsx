@@ -32,6 +32,13 @@ export default async function ProductionPage({
 }: {
   searchParams: Promise<{ date?: string }>;
 }) {
+  const allJoursSpeciaux = await db.select().from(joursSpeciaux);
+  const specialDayMap: Record<string, "ferme" | "type_semaine" | "type_sam"> = {};
+  for (const j of allJoursSpeciaux) specialDayMap[j.date] = j.type;
+  const openSundays = allJoursSpeciaux
+    .filter((j) => j.type !== "ferme" && new Date(j.date + "T12:00:00").getDay() === 0)
+    .map((j) => j.date);
+
   const params = await searchParams;
   const date = params.date ?? getDateParis();
   const veille = dateOffset(date, -1);
@@ -68,8 +75,6 @@ export default async function ProductionPage({
     ciblesDemainData,
     allSaisies,
     cloturVeille,
-    jourSpecialAujourdhuiRows,
-    jourSpecialDemainRows,
     ratioRow,
   ] = await Promise.all([
     produitIds.length > 0
@@ -88,16 +93,18 @@ export default async function ProductionPage({
         )
       : [],
     db.select().from(cloturas).where(and(eq(cloturas.date, veille), eq(cloturas.lieu, "angoulins"))),
-    db.select().from(joursSpeciaux).where(eq(joursSpeciaux.date, date)),
-    db.select().from(joursSpeciaux).where(eq(joursSpeciaux.date, demain)),
     db.select().from(parametres).where(eq(parametres.cle, "angoulins_ratio_lendemain")),
   ]);
 
-  const typeSpecialAujourdhui = jourSpecialAujourdhuiRows[0]?.type ?? null;
-  const estFerme = typeSpecialAujourdhui === "ferme";
+  const typeSpecialAujourdhui = specialDayMap[date] ?? null;
+  const estFerme =
+    typeSpecialAujourdhui === "ferme" ||
+    (typeJour === "dim" && typeSpecialAujourdhui !== "type_semaine" && typeSpecialAujourdhui !== "type_sam");
 
-  const typeJourSpecialDemain = jourSpecialDemainRows[0]?.type ?? null;
-  const demainEstFerme = typeJourDemain === "dim" || typeJourSpecialDemain === "ferme";
+  const typeJourSpecialDemain = specialDayMap[demain] ?? null;
+  const demainEstFerme =
+    (typeJourDemain === "dim" && typeJourSpecialDemain !== "type_semaine" && typeJourSpecialDemain !== "type_sam") ||
+    typeJourSpecialDemain === "ferme";
 
   const ratio = parseInt(ratioRow[0]?.valeur ?? "40", 10);
 
@@ -161,6 +168,7 @@ export default async function ProductionPage({
       estFerme={estFerme}
       demainEstFerme={demainEstFerme}
       ratio={ratio}
+      openSundays={openSundays}
     />
   );
 }

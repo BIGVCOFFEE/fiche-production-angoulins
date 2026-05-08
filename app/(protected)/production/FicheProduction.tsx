@@ -38,6 +38,7 @@ type Props = {
   estFerme: boolean;
   demainEstFerme: boolean;
   ratio: number;
+  openSundays: string[];
 };
 
 function formatDate(date: string) {
@@ -54,7 +55,7 @@ function formatDateCourt(date: string) {
 
 export default function FicheProduction({
   date, demain, typeJour, veille, categories,
-  veilleEstCloturee, estFerme, demainEstFerme, ratio,
+  veilleEstCloturee, estFerme, demainEstFerme, ratio, openSundays,
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
@@ -63,6 +64,9 @@ export default function FicheProduction({
   const changeDate = (delta: number) => {
     const d = new Date(date + "T12:00:00");
     d.setDate(d.getDate() + delta);
+    if (d.getDay() === 0 && !openSundays.includes(d.toISOString().slice(0, 10))) {
+      d.setDate(d.getDate() + delta);
+    }
     router.push(`${pathname}?date=${d.toISOString().slice(0, 10)}`);
   };
 
