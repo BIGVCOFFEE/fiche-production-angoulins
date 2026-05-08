@@ -22,6 +22,18 @@ function getLookbackDates(date: string, n: number): string[] {
   return Array.from({ length: n }, (_, i) => dateOffset(date, -(i + 1)));
 }
 
+// When a closed Sunday is in the lookback window, also include the preceding Saturday
+function withSundayNeighbour(dates: string[], openSundays: string[]): string[] {
+  const extras = dates
+    .filter((d) => new Date(d + "T12:00:00").getDay() === 0 && !openSundays.includes(d))
+    .map((d) => {
+      const dt = new Date(d + "T12:00:00");
+      dt.setDate(dt.getDate() - 1);
+      return dt.toISOString().slice(0, 10);
+    });
+  return [...new Set([...dates, ...extras])];
+}
+
 function getTypeJour(date: string): "sem" | "sam" | "dim" {
   const jour = new Date(date + "T12:00:00+02:00").getDay();
   return jour === 6 ? "sam" : jour === 0 ? "dim" : "sem";
@@ -68,7 +80,8 @@ export default async function ProductionPage({
 
   const produitIds = prods.map((p) => p.id);
   const maxLookback = prods.length > 0 ? Math.max(...prods.map((p) => p.dureeVie)) / 24 : 1;
-  const lookbackDates = getLookbackDates(date, maxLookback);
+  // Expand with Saturday when a closed Sunday falls in the lookback window
+  const lookbackDates = withSundayNeighbour(getLookbackDates(date, maxLookback), openSundays);
 
   const [
     ciblesAujourdhuiData,
@@ -114,12 +127,17 @@ export default async function ProductionPage({
   const ciblesDemainMap: Record<number, number> = {};
   for (const c of ciblesDemainData) ciblesDemainMap[c.produitId] = c.quantite;
 
+  // If veille is a closed Sunday, use Saturday for conserveExtra lookups
+  const conserveVeille = (new Date(veille + "T12:00:00").getDay() === 0 && !openSundays.includes(veille))
+    ? dateOffset(veille, -1)
+    : veille;
+
   const restantsMap: Record<string, Record<number, number>> = {};
   const conserveExtraMap: Record<number, number | null> = {};
   for (const s of allSaisies) {
     restantsMap[s.date] ??= {};
     restantsMap[s.date][s.produitId] = s.quantiteRestante;
-    if (s.date === veille) conserveExtraMap[s.produitId] = s.conserveExtra;
+    if (s.date === conserveVeille) conserveExtraMap[s.produitId] = s.conserveExtra;
   }
 
   const categoriesMap: Record<number, {
@@ -133,7 +151,7 @@ export default async function ProductionPage({
   }> = {};
 
   for (const p of prods) {
-    const pLookbackDates = getLookbackDates(date, p.dureeVie / 24);
+    const pLookbackDates = withSundayNeighbour(getLookbackDates(date, p.dureeVie / 24), openSundays);
     const cibleAujourdhui = ciblesAujourdhuiMap[p.id] ?? 0;
     const cibleDemain = demainEstFerme ? 0 : (ciblesDemainMap[p.id] ?? 0);
     const stockBrut = pLookbackDates.reduce((sum, d) => sum + (restantsMap[d]?.[p.id] ?? 0), 0);

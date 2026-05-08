@@ -26,6 +26,16 @@ function dateMinusDays(date: string, days: number) {
   return d.toISOString().slice(0, 10);
 }
 
+// If expiry date falls on a closed Sunday, shift back to Saturday
+function skipIfSunday(date: string, openSundays: string[]): string {
+  if (new Date(date + "T12:00:00").getDay() === 0 && !openSundays.includes(date)) {
+    const d = new Date(date + "T12:00:00");
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().slice(0, 10);
+  }
+  return date;
+}
+
 export default async function SaisieSoirPage({
   searchParams,
 }: {
@@ -39,6 +49,10 @@ export default async function SaisieSoirPage({
   const params = await searchParams;
   const date = params.date ?? getDateParis();
   const veille = dateMoins1(date);
+  // If veille is a closed Sunday, use Saturday for prolongation alerts + conserveExtra
+  const conserveVeille = (new Date(veille + "T12:00:00").getDay() === 0 && !openSundays.includes(veille))
+    ? dateMoins1(veille)
+    : veille;
   const jourSemaine = new Date(date + "T12:00:00+02:00").getDay();
   const typeJour = jourSemaine === 6 ? "sam" : jourSemaine === 0 ? "dim" : "sem";
 
@@ -61,7 +75,10 @@ export default async function SaisieSoirPage({
 
   const produitIds = prods.map((p) => p.id);
 
-  const expiryDates = [...new Set(prods.map((p) => dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1))))];
+  // Skip closed Sundays (no saisie) → use Saturday instead
+  const expiryDates = [...new Set(
+    prods.map((p) => skipIfSunday(dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1)), openSundays))
+  )];
 
   const [ciblesData, saisiesData, saisiesVeille, saisiesExpiry, clotureRows] = await Promise.all([
     produitIds.length > 0
@@ -71,7 +88,7 @@ export default async function SaisieSoirPage({
       ? db.select().from(saisiesSoir).where(and(eq(saisiesSoir.date, date), eq(saisiesSoir.lieu, LIEU)))
       : [],
     produitIds.length > 0
-      ? db.select().from(saisiesSoir).where(and(eq(saisiesSoir.date, veille), eq(saisiesSoir.lieu, LIEU)))
+      ? db.select().from(saisiesSoir).where(and(eq(saisiesSoir.date, conserveVeille), eq(saisiesSoir.lieu, LIEU)))
       : [],
     produitIds.length > 0
       ? db.select().from(saisiesSoir).where(and(inArray(saisiesSoir.date, expiryDates), eq(saisiesSoir.lieu, LIEU)))
@@ -121,7 +138,7 @@ export default async function SaisieSoirPage({
       cible: ciblesMap[p.id]?.[typeJour] ?? 0,
       restant: saisiesMap[p.id] ?? null,
       conserveExtra: conserveExtraMap[p.id] ?? null,
-      aJeter: (expiryMap[dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1))]?.[p.id] ?? 0) +
+      aJeter: (expiryMap[skipIfSunday(dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1)), openSundays)]?.[p.id] ?? 0) +
               (veilleConserveExtraMap[p.id] ?? 0),
     });
   }
