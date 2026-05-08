@@ -200,6 +200,7 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
         .content-area        { padding: 10px 12px !important; }
         .products-grid       { grid-template-columns: 1fr 44px 70px 44px auto !important; gap: 5px !important; padding: 6px 6px !important; }
         .waste-badge         { display: none !important; }
+        .waste-pct           { display: none !important; }
         .restant-input       { min-height: 44px !important; font-size: 16px !important; }
         .conserve-circle     { width: 36px !important; height: 36px !important; }
         .conserve-confirm-btn{ width: 36px !important; height: 36px !important; font-size: 14px !important; }
@@ -274,7 +275,7 @@ export default function SaisieSoir({ date, typeJour, categories, isCloture, aler
               <span style={headerStyle}>Produit</span>
               <span style={{ ...headerStyle, textAlign: "center" }}>Cible</span>
               <span style={{ ...headerStyle, textAlign: "center" }}>Restant</span>
-              <span style={{ ...headerStyle, textAlign: "right" }}>%</span>
+              <span className="waste-pct" style={{ ...headerStyle, textAlign: "right" }}>%</span>
               <span style={{ ...headerStyle, textAlign: "center" }}>À jeter</span>
               <span style={headerStyle} />
             </div>
