@@ -104,24 +104,27 @@ export default function FicheProduction({
   return (
     <>
       <style>{`
-        @page { size: A4 portrait; margin: 10mm 14mm; }
+        @page { size: A4 portrait; margin: 8mm 12mm; }
         @media print {
-          body { background: white !important; color: black !important; font-size: 8pt !important; }
+          body { background: white !important; color: black !important; font-size: 7pt !important; }
           .no-print { display: none !important; }
           .print-outer { display: block !important; height: auto !important; overflow: visible !important; }
           .print-container { padding: 0 !important; overflow: visible !important; height: auto !important; flex: none !important; }
-          h1 { font-size: 12pt !important; margin: 0 0 1px !important; }
-          p { font-size: 7.5pt !important; margin: 0 !important; }
-          .print-cats-container { columns: 2; column-gap: 10mm; }
-          .print-cat-block { break-inside: avoid; page-break-inside: avoid; margin-bottom: 6px !important; }
-          .print-cat-header { padding: 2px 5px !important; margin-bottom: 1px !important; font-size: 7.5pt !important; }
-          .print-col-header { padding: 1px 4px !important; margin-bottom: 1px !important; }
-          .print-row { padding: 1px 4px !important; min-height: 0 !important; line-height: 1.2 !important; }
-          .print-row span { font-size: 7.5pt !important; }
-          .print-row .a-produire-big { font-size: 9pt !important; }
-          .print-row .buffer-sub { font-size: 6pt !important; }
-          .print-grid { grid-template-columns: 1fr 38px 38px 46px !important; gap: 4px !important; }
-          .print-sachet-row { margin: 4px 0 2px !important; padding: 4px 8px !important; }
+          h1 { font-size: 9pt !important; margin: 0 !important; }
+          p { font-size: 6.5pt !important; margin: 0 !important; }
+          .print-page-header { margin-bottom: 3px !important; padding-bottom: 2px !important; }
+          .print-cats-container { columns: 2; column-gap: 6mm; }
+          .print-cat-block { break-inside: avoid; page-break-inside: avoid; margin-bottom: 3px !important; }
+          .print-cat-header { padding: 1px 3px !important; margin-bottom: 0px !important; font-size: 6.5pt !important; }
+          .print-col-header { padding: 0px 2px !important; margin-bottom: 0px !important; }
+          .print-row { padding: 0px 2px !important; min-height: 0 !important; line-height: 1.15 !important; }
+          .print-row span { font-size: 6.5pt !important; }
+          .print-row .a-produire-big { font-size: 8pt !important; }
+          .print-row .buffer-sub { font-size: 5.5pt !important; }
+          .print-grid { grid-template-columns: 1fr 34px 34px 42px !important; gap: 2px !important; }
+          .print-sachet-row { margin: 2px 0 1px !important; padding: 2px 6px !important; font-size: 6.5pt !important; }
+          .print-pain-totals { padding: 2px 6px !important; gap: 3px !important; font-size: 6pt !important; }
+          .print-pain-totals span { padding: 1px 4px !important; }
           .page-break-avoid { page-break-inside: avoid; }
         }
         @media (max-width: 640px) {
@@ -186,7 +189,7 @@ export default function FicheProduction({
           )}
 
           {/* En-tête d'impression */}
-          <div style={{ marginBottom: "10px", paddingBottom: "6px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+          <div className="print-page-header" style={{ marginBottom: "10px", paddingBottom: "6px", borderBottom: "2px solid var(--border)", display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
             <div>
               <h1 style={{ fontSize: "20px", fontWeight: 700, color: "var(--text)", margin: 0, textTransform: "capitalize" }}>
                 Fiche de production — Angoulins
@@ -301,7 +304,7 @@ export default function FicheProduction({
             </div>
           )}
           {painTotals.length > 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-elev)", fontSize: "12px" }}>
+            <div className="print-pain-totals" style={{ display: "flex", flexWrap: "wrap", gap: "6px", padding: "6px 10px", borderRadius: "6px", border: "1px solid var(--border)", background: "var(--bg-elev)", fontSize: "12px" }}>
               {painTotals.map((pt) => (
                 <span key={pt.key} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "2px 8px", borderRadius: "4px", background: "var(--accent-soft)", color: "var(--text)", border: "1px solid var(--border)" }}>
                   {pt.emoji && <span>{pt.emoji}</span>}
