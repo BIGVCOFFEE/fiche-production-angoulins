@@ -104,7 +104,7 @@ export default function FicheProduction({
   return (
     <>
       <style>{`
-        @page { size: A4 portrait; margin: 6mm 8mm; }
+        @page { size: A4 portrait; margin: 10mm 14mm; }
         @media print {
           body { background: white !important; color: black !important; font-size: 8pt !important; }
           .no-print { display: none !important; }
