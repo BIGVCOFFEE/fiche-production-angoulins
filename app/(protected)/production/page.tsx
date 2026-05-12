@@ -127,17 +127,10 @@ export default async function ProductionPage({
   const ciblesDemainMap: Record<number, number> = {};
   for (const c of ciblesDemainData) ciblesDemainMap[c.produitId] = c.quantite;
 
-  // If veille is a closed Sunday, use Saturday for conserveExtra lookups
-  const conserveVeille = (new Date(veille + "T12:00:00").getDay() === 0 && !openSundays.includes(veille))
-    ? dateOffset(veille, -1)
-    : veille;
-
-  const restantsMap: Record<string, Record<number, number>> = {};
-  const conserveExtraMap: Record<number, number | null> = {};
+  const restantsMap: Record<string, Record<number, { quantite: number; conserveExtra: number | null }>> = {};
   for (const s of allSaisies) {
     restantsMap[s.date] ??= {};
-    restantsMap[s.date][s.produitId] = s.quantiteRestante;
-    if (s.date === conserveVeille) conserveExtraMap[s.produitId] = s.conserveExtra;
+    restantsMap[s.date][s.produitId] = { quantite: s.quantiteRestante, conserveExtra: s.conserveExtra };
   }
 
   const categoriesMap: Record<number, {
@@ -154,8 +147,10 @@ export default async function ProductionPage({
     const pLookbackDates = withSundayNeighbour(getLookbackDates(date, p.dureeVie / 24), openSundays);
     const cibleAujourdhui = ciblesAujourdhuiMap[p.id] ?? 0;
     const cibleDemain = demainEstFerme ? 0 : (ciblesDemainMap[p.id] ?? 0);
-    const stockBrut = pLookbackDates.reduce((sum, d) => sum + (restantsMap[d]?.[p.id] ?? 0), 0);
-    const conserveExtra = conserveExtraMap[p.id] ?? null;
+    // Use most recent saisie (avoids double-counting when J-1 restant=0 but J-2 still has old data)
+    const veilleSaisieDate = pLookbackDates.find(d => restantsMap[d]?.[p.id] !== undefined);
+    const stockBrut = veilleSaisieDate ? (restantsMap[veilleSaisieDate][p.id].quantite ?? 0) : 0;
+    const conserveExtra = veilleSaisieDate ? (restantsMap[veilleSaisieDate][p.id].conserveExtra ?? null) : null;
     const stockVeille = stockBrut + (conserveExtra ?? 0);
     const baseAProduire = Math.max(0, cibleAujourdhui - stockVeille);
     const bufferDemain = Math.round(cibleDemain * ratio / 100);
