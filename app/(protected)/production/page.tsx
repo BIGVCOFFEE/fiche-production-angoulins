@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { categories, produits, cibles, saisiesSoir, cloturas, joursSpeciaux, parametres } from "@/lib/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, ne } from "drizzle-orm";
 import FicheProduction from "./FicheProduction";
 
 function getDateParis() {
@@ -75,7 +75,7 @@ export default async function ProductionPage({
     })
     .from(produits)
     .innerJoin(categories, eq(produits.categorieId, categories.id))
-    .where(eq(produits.actifAngoulins, true))
+    .where(and(eq(produits.actifAngoulins, true), ne(categories.nom, "Muffins")))
     .orderBy(categories.ordreAffichage, produits.ordreAffichage);
 
   const produitIds = prods.map((p) => p.id);
