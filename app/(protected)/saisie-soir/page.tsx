@@ -77,7 +77,7 @@ export default async function SaisieSoirPage({
 
   // Skip closed Sundays (no saisie) → use Saturday instead
   const expiryDates = [...new Set(
-    prods.map((p) => skipIfSunday(dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1)), openSundays))
+    prods.map((p) => skipIfSunday(dateMinusDays(date, p.dureeVie / 24), openSundays))
   )];
 
   const [ciblesData, saisiesData, saisiesVeille, saisiesExpiry, clotureRows] = await Promise.all([
@@ -138,7 +138,7 @@ export default async function SaisieSoirPage({
       cible: ciblesMap[p.id]?.[typeJour] ?? 0,
       restant: saisiesMap[p.id] ?? null,
       conserveExtra: conserveExtraMap[p.id] ?? null,
-      aJeter: (expiryMap[skipIfSunday(dateMinusDays(date, Math.max(1, p.dureeVie / 24 - 1)), openSundays)]?.[p.id] ?? 0) +
+      aJeter: (expiryMap[skipIfSunday(dateMinusDays(date, p.dureeVie / 24), openSundays)]?.[p.id] ?? 0) +
               (veilleConserveExtraMap[p.id] ?? 0),
     });
   }
