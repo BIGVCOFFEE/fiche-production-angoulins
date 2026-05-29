@@ -75,9 +75,16 @@ export default async function SaisieSoirPage({
 
   const produitIds = prods.map((p) => p.id);
 
+  // Décalage "à jeter" = DLC/24 − 1 jours.
+  // Un produit fabriqué le jour J périme à J + DLC ; il faut le jeter à la
+  // DERNIÈRE fermeture avant péremption, soit le soir de J + (DLC/24 − 1).
+  // Ex : 48h fabriqué lundi → périme mercredi matin → jeté mardi soir (offset 1).
+  //      24h → jeté le soir même (offset 0). 72h → +2 jours.
+  const expiryOffset = (dureeVie: number) => Math.max(0, Math.round(dureeVie / 24) - 1);
+
   // Skip closed Sundays (no saisie) → use Saturday instead
   const expiryDates = [...new Set(
-    prods.map((p) => skipIfSunday(dateMinusDays(date, p.dureeVie / 24), openSundays))
+    prods.map((p) => skipIfSunday(dateMinusDays(date, expiryOffset(p.dureeVie)), openSundays))
   )];
 
   const [ciblesData, saisiesData, saisiesVeille, saisiesExpiry, clotureRows] = await Promise.all([
@@ -138,7 +145,7 @@ export default async function SaisieSoirPage({
       cible: ciblesMap[p.id]?.[typeJour] ?? 0,
       restant: saisiesMap[p.id] ?? null,
       conserveExtra: conserveExtraMap[p.id] ?? null,
-      aJeter: (expiryMap[skipIfSunday(dateMinusDays(date, p.dureeVie / 24), openSundays)]?.[p.id] ?? 0) +
+      aJeter: (expiryMap[skipIfSunday(dateMinusDays(date, expiryOffset(p.dureeVie)), openSundays)]?.[p.id] ?? 0) +
               (veilleConserveExtraMap[p.id] ?? 0),
     });
   }
