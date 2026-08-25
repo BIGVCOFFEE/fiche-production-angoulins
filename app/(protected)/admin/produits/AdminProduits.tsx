@@ -4,7 +4,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import {
   updateCible, toggleActifAngoulins, updateCouleur, updateDureeVie,
   updateTranchesParUnite, updateEstPainProduit,
-  ajouterProduit, supprimerProduit, setRatioLendemain,
+  ajouterProduit, supprimerProduit, renommerProduit, setRatioLendemain,
 } from "./actions";
 import { toast } from "sonner";
 
@@ -106,6 +106,8 @@ export default function AdminProduits({
   const [addingIn, setAddingIn] = useState<number | null>(null);
   const [newNom, setNewNom] = useState("");
   const [colorPickerFor, setColorPickerFor] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingVal, setEditingVal] = useState("");
   const [isPending, startTransition] = useTransition();
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
@@ -182,7 +184,32 @@ export default function AdminProduits({
     });
   };
 
-  const handleSupprimer = (produitId: number, categorieId: number) => {
+  const handleRenommer = (categorieId: number) => {
+    const id = editingId;
+    const val = editingVal.trim();
+    setEditingId(null);
+    setEditingVal("");
+    if (!id || !val) return;
+    const prev = catProduits[categorieId]?.find((p) => p.id === id)?.nom;
+    if (val === prev) return;
+    setCatProduits((m) => ({
+      ...m,
+      [categorieId]: m[categorieId].map((p) => p.id === id ? { ...p, nom: val } : p),
+    }));
+    startTransition(async () => {
+      try { await renommerProduit(id, val); toast.success("Renommé"); }
+      catch (e: unknown) {
+        setCatProduits((m) => ({
+          ...m,
+          [categorieId]: m[categorieId].map((p) => p.id === id ? { ...p, nom: prev ?? p.nom } : p),
+        }));
+        toast.error(e instanceof Error ? e.message : "Erreur");
+      }
+    });
+  };
+
+  const handleSupprimer = (produitId: number, categorieId: number, nomProduit: string) => {
+    if (!window.confirm(`Supprimer « ${nomProduit} » ? Cette action est irréversible.`)) return;
     startTransition(async () => {
       try {
         await supprimerProduit(produitId);
@@ -296,9 +323,27 @@ export default function AdminProduits({
                       <div style={{ position: "absolute", left: 0, top: "4px", bottom: "4px", width: "3px", borderRadius: "2px", background: couleur }} />
                     )}
 
-                    <span style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingLeft: couleur ? "8px" : 0 }}>
-                      {lp.nom}
-                    </span>
+                    {editingId === lp.id ? (
+                      <input
+                        autoFocus
+                        value={editingVal}
+                        onChange={(e) => setEditingVal(e.target.value)}
+                        onBlur={() => handleRenommer(cat.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") { e.currentTarget.blur(); }
+                          if (e.key === "Escape") { setEditingId(null); setEditingVal(""); }
+                        }}
+                        style={{ fontSize: "13px", color: "var(--text)", background: "var(--bg-elev-2)", border: "1px solid var(--accent)", borderRadius: "4px", padding: "2px 6px", outline: "none", width: "100%", paddingLeft: couleur ? "8px" : undefined }}
+                      />
+                    ) : (
+                      <span
+                        onDoubleClick={() => { setEditingId(lp.id); setEditingVal(lp.nom); }}
+                        title="Double-cliquer pour renommer"
+                        style={{ fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", paddingLeft: couleur ? "8px" : 0, cursor: "text" }}
+                      >
+                        {lp.nom}
+                      </span>
+                    )}
 
                     {/* Actif toggle */}
                     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -377,7 +422,7 @@ export default function AdminProduits({
 
                     {/* Supprimer */}
                     <button
-                      onClick={() => handleSupprimer(lp.id, cat.id)}
+                      onClick={() => handleSupprimer(lp.id, cat.id, lp.nom)}
                       disabled={isPending}
                       title="Supprimer"
                       style={{ width: "28px", height: "28px", borderRadius: "6px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-faint)", cursor: "pointer", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center" }}

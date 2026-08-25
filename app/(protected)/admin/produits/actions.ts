@@ -94,6 +94,14 @@ export async function ajouterProduit(categorieId: number, nom: string) {
   return newProduit.id;
 }
 
+export async function renommerProduit(produitId: number, nom: string) {
+  await authCheck();
+  const trimmed = nom.trim();
+  if (!trimmed) throw new Error("Nom requis");
+  await db.update(produits).set({ nom: trimmed }).where(eq(produits.id, produitId));
+  revalidatePath("/admin/produits");
+}
+
 export async function supprimerProduit(produitId: number) {
   await authCheck();
 
