@@ -119,6 +119,16 @@ export async function supprimerProduit(produitId: number) {
   revalidatePath("/admin/produits");
 }
 
+export async function setVendrediSam(enabled: boolean) {
+  await authCheck();
+  await db
+    .insert(parametres)
+    .values({ cle: "angoulins_vendredi_sam", valeur: enabled ? "true" : "false" })
+    .onConflictDoUpdate({ target: parametres.cle, set: { valeur: enabled ? "true" : "false" } });
+  revalidatePath("/admin/produits");
+  revalidatePath("/production");
+}
+
 export async function setRatioLendemain(ratio: number) {
   await authCheck();
   const val = Math.max(0, Math.min(100, Math.round(ratio)));

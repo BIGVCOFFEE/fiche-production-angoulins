@@ -44,7 +44,10 @@ export default async function ProductionPage({
 }: {
   searchParams: Promise<{ date?: string }>;
 }) {
-  const allJoursSpeciaux = await db.select().from(joursSpeciaux);
+  const [allJoursSpeciaux, vendrediSamRows] = await Promise.all([
+    db.select().from(joursSpeciaux),
+    db.select().from(parametres).where(eq(parametres.cle, "angoulins_vendredi_sam")),
+  ]);
   const specialDayMap: Record<string, "ferme" | "type_semaine" | "type_sam"> = {};
   for (const j of allJoursSpeciaux) specialDayMap[j.date] = j.type;
   const openSundays = allJoursSpeciaux
@@ -55,7 +58,10 @@ export default async function ProductionPage({
   const date = params.date ?? getDateParis();
   const veille = dateOffset(date, -1);
   const demain = dateOffset(date, 1);
-  const typeJour = getTypeJour(date);
+  const vendrediSam = vendrediSamRows[0]?.valeur === "true";
+  const rawTypeJour = getTypeJour(date);
+  const jourSemaine = new Date(date + "T12:00:00+02:00").getDay();
+  const typeJour: "sem" | "sam" | "dim" = vendrediSam && jourSemaine === 5 && rawTypeJour === "sem" ? "sam" : rawTypeJour;
   const typeJourDemain = getTypeJour(demain);
 
   const prods = await db

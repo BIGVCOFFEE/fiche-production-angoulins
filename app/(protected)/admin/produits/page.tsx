@@ -13,7 +13,7 @@ export default async function AdminProduitsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || await getUserRole(user.id) !== "admin") redirect("/aujourdhui");
 
-  const [prods, ciblesData, toutesLesCategories, ratioRow] = await Promise.all([
+  const [prods, ciblesData, toutesLesCategories, ratioRow, vendrediSamRow] = await Promise.all([
     db
       .select({
         id: produits.id,
@@ -35,6 +35,7 @@ export default async function AdminProduitsPage() {
     db.select().from(cibles).where(eq(cibles.lieu, LIEU)),
     db.select().from(categories).orderBy(categories.ordreAffichage),
     db.select().from(parametres).where(eq(parametres.cle, "angoulins_ratio_lendemain")),
+    db.select().from(parametres).where(eq(parametres.cle, "angoulins_vendredi_sam")),
   ]);
 
   const ciblesMap: Record<number, Record<string, number>> = {};
@@ -68,6 +69,7 @@ export default async function AdminProduitsPage() {
 
   const categoriesList = Object.values(categoriesMap).sort((a, b) => a.ordre - b.ordre);
   const ratio = parseInt(ratioRow[0]?.valeur ?? "40", 10);
+  const vendrediSam = vendrediSamRow[0]?.valeur === "true";
 
-  return <AdminProduits categories={categoriesList} ratio={ratio} />;
+  return <AdminProduits categories={categoriesList} ratio={ratio} vendrediSam={vendrediSam} />;
 }

@@ -4,7 +4,7 @@ import { useCallback, useRef, useState, useTransition } from "react";
 import {
   updateCible, toggleActifAngoulins, updateCouleur, updateDureeVie,
   updateTranchesParUnite, updateEstPainProduit,
-  ajouterProduit, supprimerProduit, renommerProduit, setRatioLendemain,
+  ajouterProduit, supprimerProduit, renommerProduit, setRatioLendemain, setVendrediSam,
 } from "./actions";
 import { toast } from "sonner";
 
@@ -51,9 +51,11 @@ function hexToRgba(hex: string, alpha: number) {
 export default function AdminProduits({
   categories,
   ratio: initialRatio,
+  vendrediSam: initialVendrediSam,
 }: {
   categories: Categorie[];
   ratio: number;
+  vendrediSam: boolean;
 }) {
   const [actifMap, setActifMap] = useState<Record<number, boolean>>(() => {
     const m: Record<number, boolean> = {};
@@ -102,6 +104,7 @@ export default function AdminProduits({
   });
 
   const [ratio, setRatio] = useState(initialRatio);
+  const [vendrediSam, setVendrediSamState] = useState(initialVendrediSam);
   const [savingCible, setSavingCible] = useState<Record<string, boolean>>({});
   const [addingIn, setAddingIn] = useState<number | null>(null);
   const [newNom, setNewNom] = useState("");
@@ -219,6 +222,15 @@ export default function AdminProduits({
     });
   };
 
+  const handleVendrediSam = () => {
+    const next = !vendrediSam;
+    setVendrediSamState(next);
+    startTransition(async () => {
+      try { await setVendrediSam(next); }
+      catch { setVendrediSamState(!next); toast.error("Erreur"); }
+    });
+  };
+
   const handleRatio = (delta: number) => {
     const next = Math.max(0, Math.min(100, ratio + delta));
     setRatio(next);
@@ -246,6 +258,19 @@ export default function AdminProduits({
           {totalActifs}/{totalProduits} actifs
         </span>
         <div style={{ flex: 1 }} />
+        {/* Vendredi = cibles samedi */}
+        <button
+          onClick={handleVendrediSam}
+          disabled={isPending}
+          title="Quand activé, le vendredi utilise les cibles Samedi (montée en charge J-1)"
+          style={{ display: "flex", alignItems: "center", gap: "8px", padding: "5px 10px", borderRadius: "6px", border: `1px solid ${vendrediSam ? "var(--accent)" : "var(--border)"}`, background: vendrediSam ? "var(--accent-soft)" : "var(--bg-elev-2)", color: vendrediSam ? "var(--accent)" : "var(--text-dim)", cursor: "pointer", fontSize: "12px", fontWeight: 600, whiteSpace: "nowrap" }}
+        >
+          <span style={{ width: "28px", height: "16px", borderRadius: "8px", background: vendrediSam ? "var(--accent)" : "var(--border)", position: "relative", display: "inline-block", flexShrink: 0 }}>
+            <span style={{ position: "absolute", top: "2px", left: vendrediSam ? "14px" : "2px", width: "12px", height: "12px", borderRadius: "50%", background: "white", transition: "left 0.15s" }} />
+          </span>
+          Vendredi → cibles Sam
+        </button>
+
         {/* Ratio lendemain */}
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ fontSize: "12px", color: "var(--text-dim)" }}>Buffer lendemain :</span>
